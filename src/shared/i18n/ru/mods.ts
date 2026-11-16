@@ -1,0 +1,71 @@
+import { plural } from '../plural.ts';
+
+export const mods = {
+  title: 'Моды',
+  count: plural({ one: '{count} мод', few: '{count} мода', many: '{count} модов', other: '{count} мода' }),
+  searchPlaceholder: 'Название мода',
+  noFiltersHint: 'Фильтры не заданы: показаны все моды хранилища',
+  sort: {
+    byAuthor: 'По автору',
+  },
+  typeFilter: 'Тип',
+  types: {
+    any: 'Все',
+    sim: 'Игровые',
+    simShort: 'Игровой',
+    uiMod: 'UI-мод',
+    simMod: 'Игровой мод',
+    uiMods: 'UI-моды',
+    simMods: 'Игровые моды',
+  },
+  filters: {
+    active: 'Активные',
+  },
+  columns: {
+    mod: 'Мод',
+    type: 'Тип',
+    author: 'Автор',
+    updated: 'Обновлён',
+    uploaded: 'Загружен',
+    active: 'Активен',
+  },
+  vaultTable: 'Моды хранилища',
+  installedTable: 'Установленные моды',
+  empty: {
+    title: 'Под фильтры не подошёл ни один мод',
+  },
+  status: {
+    active: 'Активен',
+    installed: 'Установлен',
+    notInstalled: 'Не установлен',
+  },
+  recommended: 'Рекомендуемый',
+  ranked: 'Рейтинговый',
+  enable: 'Включить',
+  disable: 'Выключить',
+  activeSwitch: '{name}: активен',
+  installed: {
+    searchPlaceholder: 'Название или автор',
+    rescan: 'Перечитать папку модов',
+    onlyActive: 'Только активные',
+    activeOf: 'Активно {active} из {total}',
+    hint: 'UI-моды работают в любой игре, игровые подключаются при создании игры',
+    noMods: 'Модов нет',
+    noModsHint: 'Установите моды из хранилища или проверьте папку в настройках.',
+  },
+  detail: {
+    vaultKind: 'Мод из хранилища',
+    installedKind: 'Установленный мод',
+    uploader: 'Загрузил',
+    uploaded: 'Загружен',
+    updated: 'Обновлён',
+    folder: 'Папка',
+    enabled: 'Мод включён',
+    disabled: 'Мод выключен',
+    uninstall: 'Удалить мод',
+  },
+  uninstallConfirm: {
+    title: 'Удалить мод «{name}»?',
+    description: 'Папка мода будет удалена с диска.',
+  },
+};

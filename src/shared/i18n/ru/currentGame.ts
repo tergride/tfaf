@@ -1,0 +1,177 @@
+// The running game: its tab, the banner above the lists and the start window with its minimized card.
+export const currentGame = {
+  quoted: '«{title}»',
+  notRunning: 'Игра не запущена',
+  title: 'Текущая игра',
+  // How much the tab shows: what is needed at a glance, or everything the launcher knows.
+  detail: {
+    label: 'Сколько показывать',
+    brief: 'Кратко',
+    full: 'Подробно',
+  },
+  kinds: {
+    online: 'Сетевая игра',
+    offline: 'Без сервера',
+    replay: 'Реплей',
+  },
+  elapsed: 'идёт {duration}',
+  desyncs: 'Игра сообщила о рассинхронизации: {count}',
+  desyncsDetail: 'Состояние игры у одного из игроков разошлось с остальными. Подробности в логе игры.',
+  filesDiffer: 'Файлы отличаются от файлов хоста {host}: {players}',
+  filesDifferHint: 'Отличия указаны под именами игроков.',
+  filesDifferDetail:
+    'Файлы всех игроков сравниваются с файлами хоста. Игрокам из списка нужно заменить отличающиеся файлы такими же, как у хоста, иначе возможна рассинхронизация.',
+  hostFilesUnknown: 'Хост {host} не использует TFAF или ещё не передал контрольные суммы файлов, поэтому сравнить файлы не с чем.',
+  // Players of the game we host whose game lacks a TFAF feature of it, such as mod isolation.
+  featureIssues: {
+    missing: 'У игрока {login} нет функций TFAF: {features}',
+    kicked: 'Игрок {login} отключён от лобби, потому что у него нет функций TFAF: {features}',
+    // Under the player in the list of players.
+    row: 'нет функций TFAF этой игры: {features}',
+    detail: 'Без необязательной функции игрок играет как обычно, но без неё. Игроков без обязательной функции лаунчер отключает от лобби.',
+  },
+  lobbyFeatures: {
+    title: 'Функции TFAF',
+    none: 'Не включены',
+  },
+  // What differs from the host's files, joined into a list after the player's name.
+  differs: {
+    gameFiles: 'файлы игры FAF',
+    map: 'карта «{map}»',
+    mapUnnamed: 'карта',
+    mod: 'мод «{mod}»',
+    unknownMod: 'мод, которого у вас нет',
+    mods: 'моды',
+  },
+  // The host changes the mods of its game while the game is in its lobby.
+  changeMods: {
+    button: 'Моды игры',
+    title: 'Моды игры',
+    description:
+      'Игра использует только те моды, с которыми была запущена, поэтому она будет создана заново. У игроков с TFAF игра закроется, недостающие моды скачаются, и они автоматически подключатся к новой игре. Остальным игрокам нужно будет присоединиться вручную. Слоты и ИИ в лобби будут сброшены.',
+    apply: 'Пересоздать игру',
+  },
+  stats: {
+    featuredMod: 'Мод игры',
+    gameId: 'Номер игры',
+    host: 'Хост',
+    players: 'Игроки',
+    playersOfMax: '{players} из {max}',
+    map: 'Карта',
+  },
+  mods: 'Моды игры',
+  // How a map or mod of the game compares with the vault.
+  checks: {
+    matches: 'совпадает с хранилищем FAF',
+    repaired: 'файлы отличались и были скачаны заново',
+    notInVault: 'нет в хранилище FAF, проверить невозможно',
+    unchecked: 'не удалось сверить с хранилищем',
+    official: 'из установки игры',
+    gameFiles: 'файлы версии {version} проверены по контрольным суммам',
+  },
+  players: {
+    title: 'Игроки',
+    connected: 'подключено {connected} из {total}',
+    waiting: 'Список игроков появится, когда лобби-сервер передаст данные игры и сетевой адаптер начнёт подключение.',
+    unplaced: 'Подключаются',
+    self: 'вы',
+    host: 'хост',
+    hostHint: 'Файлы остальных игроков сравниваются с файлами хоста',
+    viaTfaf: 'Подключён через TFAF',
+    // `link`: the connection in short, with the ping; `connection`: its state and route.
+    columns: {
+      player: 'Игрок',
+      link: 'Связь',
+      connection: 'Соединение',
+      ping: 'Пинг',
+      loss: 'Потери',
+      files: 'Файлы',
+    },
+    filesHint: 'Файлы игры, карта и моды игрока сверены с файлами хоста',
+    ping: 'пинг {ms} мс',
+    pingValue: '{ms} мс',
+    loss: 'потери {out} / {in} %',
+    lossValue: '{out} / {in} %',
+    lossHint: 'Потери пакетов при передаче игроку и от него за последние 20 с',
+    relay: 'через сервер',
+    duplication: 'дублирование',
+    duplicationMark: '×2',
+    duplicationHint: 'Из-за потерь пакеты игры отправляются этому игроку дважды',
+    noAdapter: 'подключение ещё не началось',
+    legend:
+      '«Игра», «Карта», «Моды» — сравнение контрольных сумм файлов игрока с файлами хоста. Сравнение работает, только если и игрок, и хост используют TFAF. «Потери» — доля пакетов, потерянных при передаче игроку и от него за последние 20 с. «×2» — из-за потерь пакеты игры отправляются игроку дважды.',
+  },
+  // The parts of a player's files compared with the host's, and the result of the comparison.
+  parts: {
+    gameFiles: 'Игра',
+    map: 'Карта',
+    mods: 'Моды',
+  },
+  comparison: {
+    same: 'совпадают',
+    different: 'отличаются',
+    unknown: 'нет данных',
+  },
+  partComparison: '{part}: {comparison}',
+  noFingerprints: {
+    tfaf: 'Версия TFAF у игрока не передаёт контрольные суммы файлов',
+    otherClient: 'Клиент игрока не передаёт контрольные суммы файлов',
+    waiting: 'Ожидание ответа сетевого адаптера игрока',
+    host: 'Нет контрольных сумм файлов хоста, сравнить не с чем',
+  },
+  // The same reasons, short enough for a cell of the list of players.
+  noFingerprintsShort: {
+    tfaf: 'старая версия TFAF',
+    otherClient: 'другой клиент',
+    waiting: 'ожидание адаптера',
+    host: 'нет данных хоста',
+  },
+  connection: {
+    connecting: 'подключение…',
+    reconnecting: 'переподключение…',
+    relay: 'через TURN-сервер',
+    direct: 'напрямую',
+    connected: 'подключён',
+  },
+  replaySolo: 'Реплей воспроизводится без подключения к другим игрокам.',
+  offlineSolo: 'Игра идёт без сервера и без подключения к другим игрокам.',
+  banner: {
+    withTitle: '{label}: «{title}»',
+    watching: 'Идёт просмотр',
+    running: 'Игра запущена',
+    connected: 'подключено {connected} из {total}',
+    filesDiffer: 'файлы отличаются: {players}',
+    hadDesync: 'рассинхронизация',
+    details: 'Подробнее',
+    closeGame: 'Закрыть игру',
+    closeReplay: 'Закрыть реплей',
+    killConfirm: 'Закрыть Forged Alliance?',
+    killWarnings: {
+      online: 'Для остальных игроков это будет означать, что вы покинули игру.',
+      offline: 'Игра прервётся.',
+      replay: 'Просмотр реплея прервётся.',
+    },
+    gameFailed: 'Не удалось запустить игру',
+    replayFailed: 'Не удалось запустить реплей',
+    hide: 'Скрыть',
+  },
+  launch: {
+    withTitle: '{label} «{title}»',
+    titles: {
+      online: 'Запуск игры',
+      offline: 'Запуск игры без сервера',
+      replay: 'Запуск реплея',
+    },
+    failed: 'Не удалось запустить',
+    expand: 'Развернуть',
+    hide: 'Скрыть',
+    cancel: 'Отменить',
+    cancelling: 'Отмена…',
+    doneOfTotal: 'Готово {done} из {total}',
+    progress: 'готово {done} из {total}',
+    stageAndMore: '{stage} и ещё {count}',
+    cannotCancel: 'Сервер уже создаёт игру, отменить нельзя',
+    minimize: 'Свернуть',
+    cancelLaunch: 'Отменить запуск',
+  },
+};

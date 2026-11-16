@@ -1,0 +1,30 @@
+import type { Messages } from '../ru.ts';
+
+export const links: Messages['links'] = {
+  title: 'Links and help',
+  intro: 'Where to get help with FAF and follow the community news. The links open in the browser.',
+  groups: {
+    help: 'Help',
+    community: 'Community',
+    trouble: 'Troubleshooting',
+  },
+  troubleHint: 'When contacting tech support, attach the logs from the time the problem occurred.',
+  wiki: 'FAF wiki',
+  wikiHint: 'Guides to the game, the client and the vault',
+  techForum: 'Help on the forum',
+  techForumHint: 'The “I need help” section of the FAF forum',
+  techDiscord: 'Tech support on Discord',
+  techDiscordHint: 'The FAF technical help server',
+  rules: 'FAF rules',
+  rulesHint: 'How to behave in games and the chat',
+  vaultRules: 'Vault rules',
+  vaultRulesHint: 'What may be uploaded to the map and mod vault',
+  discord: 'FAF Discord',
+  discordHint: 'The community’s main server',
+  youtube: 'YouTube',
+  youtubeHint: 'The FAF channel: tournaments and casts',
+  twitch: 'Twitch',
+  twitchHint: 'FAF streams',
+  patreon: 'Patreon',
+  patreonHint: 'Support the FAF servers',
+};

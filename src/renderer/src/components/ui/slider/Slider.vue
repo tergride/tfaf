@@ -1,0 +1,44 @@
+<script setup lang="ts">
+import type { SliderRootEmits, SliderRootProps } from "reka-ui"
+import type { HTMLAttributes } from "vue"
+import { reactiveOmit } from "@vueuse/core"
+import { SliderRange, SliderRoot, SliderThumb, SliderTrack, useForwardPropsEmits } from "reka-ui"
+import { cn } from "@/lib/utils"
+
+const props = defineProps<SliderRootProps & { class?: HTMLAttributes["class"] }>()
+const emits = defineEmits<SliderRootEmits>()
+
+const delegatedProps = reactiveOmit(props, "class")
+
+const forwarded = useForwardPropsEmits(delegatedProps, emits)
+</script>
+
+<template>
+  <SliderRoot
+    v-slot="{ modelValue: thumbs }"
+    data-slot="slider"
+    :class="cn(
+      'relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col',
+      props.class,
+    )"
+    v-bind="forwarded"
+  >
+    <SliderTrack
+      data-slot="slider-track"
+      class="bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+    >
+      <SliderRange
+        data-slot="slider-range"
+        class="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+      />
+    </SliderTrack>
+
+    <!-- The hollow is scaled down rather than inset: an inset box snaps to device pixels and leaves the ring lopsided at fractional zoom. -->
+    <SliderThumb
+      v-for="(_, key) in thumbs"
+      :key="key"
+      data-slot="slider-thumb"
+      class="relative block size-(--shape-mark-size) shrink-0 rounded-(--shape-mark-radius) bg-primary ring-ring/50 transition-[color,box-shadow] [clip-path:var(--shape-mark)] before:absolute before:inset-0 before:scale-80 before:rounded-[inherit] before:[clip-path:inherit] before:bg-background hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+    />
+  </SliderRoot>
+</template>

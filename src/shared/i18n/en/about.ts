@@ -1,0 +1,43 @@
+import type { Messages } from '../ru.ts';
+
+export const about: Messages['about'] = {
+  title: 'About',
+  intro: 'TFAF is a launcher for the FAF servers: custom games, co-op, matchmaker, chat, maps, mods and replays.',
+  update: {
+    version: 'TFAF version {version}',
+    disabled: 'Auto-update is off in this build: new versions are installed manually.',
+    portable: 'Portable version. To update it, close the launcher, run the new installer, choose the Portable option and select this same folder. Your data will be kept.',
+    checking: 'Checking for updates…',
+    downloading: 'Downloading version {version}: {percent}%',
+    ready: 'Version {version} is downloaded and will be installed after a restart.',
+    failed: 'Could not check for updates: {error}',
+    latest: 'The latest version is installed.',
+    schedule: 'The launcher checks for updates at startup and every 4 hours, downloads them automatically and installs them on restart.',
+    check: 'Check for updates',
+    restart: 'Restart and update',
+    closeGame: 'Close the game to update.',
+    manual: 'Download manually',
+    beta: 'Get beta versions',
+    betaHint: 'Beta versions come out before regular ones and may contain bugs. When this option is off, the launcher installs regular versions only, and goes back from a beta version to the latest regular one.',
+  },
+  history: {
+    title: 'Version history',
+    allReleases: 'All versions on GitHub',
+    offline: 'Could not load the versions from GitHub: {error}. Showing the versions this build knows.',
+    empty: 'No versions yet.',
+    noNotes: 'No notes for this version.',
+    showOlder: 'Show older versions',
+    openRelease: 'Open the version page on GitHub',
+    installed: 'Installed',
+    downloading: 'Downloading',
+    ready: 'Ready to install',
+    newer: 'Newer than installed',
+    beta: 'Beta',
+  },
+  whatsNew: {
+    title: "What's new in TFAF {version}",
+    description: 'The launcher has been updated. The changes in this version are described below.',
+    history: 'Full version history',
+    close: 'Close',
+  },
+};

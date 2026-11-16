@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" width="112" height="112" alt="TFAF">
+  <img src="src/renderer/src/assets/logo.png" width="112" height="112" alt="TFAF">
 </p>
 
 <h1 align="center">TFAF</h1>
@@ -9,15 +9,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/tergride/tfaf-releases/releases/latest"><img src="https://img.shields.io/github/v/release/tergride/tfaf-releases?label=version&color=f97316" alt="Последняя версия"></a>
+  <a href="https://github.com/tergride/tfaf/releases/latest"><img src="https://img.shields.io/github/v/release/tergride/tfaf?label=version&color=f97316" alt="Последняя версия"></a>
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4" alt="Windows 10 и 11">
   <img src="https://img.shields.io/badge/language-RU%20%7C%20EN-64748b" alt="Русский и английский">
 </p>
 
 <p align="center">
-  <a href="https://github.com/tergride/tfaf-releases/releases/latest"><b>Скачать последнюю версию</b></a>
+  <a href="https://github.com/tergride/tfaf/releases/latest"><b>Скачать последнюю версию</b></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/tergride/tfaf-releases/releases">Все версии</a>
+  <a href="https://github.com/tergride/tfaf/releases">Все версии</a>
   &nbsp;·&nbsp;
   <a href="#english">English</a>
 </p>
@@ -42,7 +42,7 @@ TFAF — неофициальный клиент Forged Alliance Forever, аль
 
 Нужны Windows 10 или 11 (64 бита), установленная Supreme Commander: Forged Alliance (Steam или GOG) и аккаунт на [faforever.com](https://www.faforever.com).
 
-1. Скачайте `TFAF-Setup-<версия>.exe` из [последнего релиза](https://github.com/tergride/tfaf-releases/releases/latest) и запустите его.
+1. Скачайте `TFAF-Setup-<версия>.exe` из [последнего релиза](https://github.com/tergride/tfaf/releases/latest) и запустите его.
 2. Установщик не подписан, поэтому Windows SmartScreen предупредит о неизвестном издателе. Нажмите «Подробнее», затем «Выполнить в любом случае».
 3. Лаунчер ставится без прав администратора в `%LOCALAPPDATA%\Programs\TFAF` и создаёт ярлык на рабочем столе.
 4. Войдите в аккаунт FAF: вход проходит на странице FAF в браузере.
@@ -51,7 +51,7 @@ TFAF можно держать рядом с официальным клиент
 
 ## Обновления
 
-Лаунчер проверяет обновления при запуске и раз в 4 часа, скачивает новую версию сам и ставит её при перезапуске. Во время игры обновление не ставится. Проверить обновления вручную и прочитать, что изменилось, можно в разделе «О программе». Описание всех версий есть и на странице [Releases](https://github.com/tergride/tfaf-releases/releases).
+Лаунчер проверяет обновления при запуске и раз в 4 часа, скачивает новую версию сам и ставит её при перезапуске. Во время игры обновление не ставится. Проверить обновления вручную и прочитать, что изменилось, можно в разделе «О программе». Описание всех версий есть и на странице [Releases](https://github.com/tergride/tfaf/releases).
 
 Сами обновляются версии начиная с 0.7.0. Версии до неё выходили раньше этого репозитория, их установщики лежат в релизах для истории. Если у вас одна из них, один раз поставьте последнюю версию поверх: настройки и вход сохранятся.
 
@@ -72,7 +72,7 @@ TFAF можно держать рядом с официальным клиент
 
 ## Что в этом репозитории
 
-Только сборки и описания версий, исходного кода здесь нет. В каждом релизе:
+Исходный код лаунчера и его релизы. Код опубликован начиная с версии 0.19.0, поэтому архивы исходников у релизов до неё содержат только это описание. В каждом релизе:
 
 | Файл | Зачем |
 |---|---|
@@ -88,16 +88,20 @@ TFAF можно держать рядом с официальным клиент
 
 TFAF не связан с командой Forged Alliance Forever. Supreme Commander: Forged Alliance принадлежит её правообладателям.
 
+Код TFAF распространяется по лицензии GNU GPL версии 3 или любой более поздней версии, см. [LICENSE](LICENSE). Ресурсы из других проектов и их лицензии перечислены в [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ---
 
 ## English
 
 TFAF is an unofficial client for [Forged Alliance Forever](https://www.faforever.com), an alternative to the official FAF client for Supreme Commander: Forged Alliance. It signs in with your FAF account and connects to the same servers, so you play together with everyone on FAF, whichever client they use.
 
-**Install.** You need Windows 10 or 11 (64-bit), Supreme Commander: Forged Alliance (Steam or GOG) and a FAF account. Download `TFAF-Setup-<version>.exe` from the [latest release](https://github.com/tergride/tfaf-releases/releases/latest) and run it. The installer is not signed, so Windows SmartScreen warns about an unknown publisher: click "More info", then "Run anyway". TFAF installs without administrator rights into `%LOCALAPPDATA%\Programs\TFAF` and can live next to the official client.
+**Install.** You need Windows 10 or 11 (64-bit), Supreme Commander: Forged Alliance (Steam or GOG) and a FAF account. Download `TFAF-Setup-<version>.exe` from the [latest release](https://github.com/tergride/tfaf/releases/latest) and run it. The installer is not signed, so Windows SmartScreen warns about an unknown publisher: click "More info", then "Run anyway". TFAF installs without administrator rights into `%LOCALAPPDATA%\Programs\TFAF` and can live next to the official client.
 
 **Updates.** From version 0.7.0 on, the launcher checks for updates at startup and every 4 hours, downloads them by itself and installs them on restart, never during a game. The About page checks manually and shows the notes of every version. Older versions are kept here for the record and do not update themselves: install the latest one over them once.
 
 **Problems.** Attach the launcher log `%APPDATA%\tfaf-launcher\logs\launcher.log` and the game logs from `C:\ProgramData\TFAF\logs` when reporting a problem. Both folders open from the menu under your name.
 
 The [FAF rules](https://www.faforever.com/rules) apply on the FAF servers. TFAF does not modify the installed game and gives no in-game advantage. TFAF is not affiliated with the Forged Alliance Forever team.
+
+**Source code.** This repository holds the launcher's code, published from version 0.19.0 on, and its releases. The code is under the GNU General Public License, version 3 or any later version, see [LICENSE](LICENSE); assets from other projects and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

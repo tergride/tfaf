@@ -1,0 +1,606 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* The launcher has only a dark theme: the root element always carries the dark class. */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * "Command post" palette taken from the TFAF emblem: a blue-black hull, steel plates, an orange and a blue glow.
+ * The shared themes.ts owns the palettes; this default is also the fallback before settings arrive.
+ * Every theme also sets the --shape-* tokens, the contours of plates (see the plate utility), radio and slider marks,
+ * switch thumbs and selection brackets. A theme tile in the settings wears its own theme, so each theme sets all of
+ * them, or the tile would take the window's.
+ */
+:root,
+[data-theme='default'] {
+  --radius: 0.375rem;
+  --background: #0b1017;
+  --foreground: #e5ecf4;
+  --card: #111923;
+  --card-foreground: #e5ecf4;
+  --popover: #141d28;
+  --popover-foreground: #e5ecf4;
+  --primary: #ff9a2e;
+  --primary-foreground: #1d1103;
+  --secondary: #17212d;
+  --secondary-foreground: #e5ecf4;
+  --muted: #17212d;
+  --muted-foreground: #a1afc2;
+  --accent: #1e2a39;
+  --accent-foreground: #eef2f7;
+  --destructive: #e5564b;
+  --border: #273546;
+  --input: #3a4d63;
+  --ring: #4aa8ff;
+  --info: #4aa8ff;
+  --success: #5bcf93;
+  --warning: #f2b44a;
+  --hull: #070b10;
+  --faint: #8696a9;
+  --shape-tl: 1;
+  --shape-tr: 0;
+  --shape-br: 1;
+  --shape-bl: 0;
+  --shape-ctl: 1;
+  --shape-ctr: 0;
+  --shape-cbr: 1;
+  --shape-cbl: 0;
+  --shape-point: 0%;
+  --shape-radius: 0px;
+  --shape-control-radius: 0px;
+  --shape-panel-radius: 0px;
+  --shape-panel-border: var(--border);
+  --shape-panel-shadow: 0 0 #0000;
+  --shape-mark: none;
+  --shape-mark-radius: 50%;
+  --shape-mark-size: 16px;
+  --shape-thumb: none;
+  --shape-thumb-radius: 0;
+  --shape-switch-width: 2.25rem;
+  --shape-switch-height: 1.15rem;
+  --shape-switch-inset: 3px;
+  --shape-switch-fill: var(--primary);
+  --shape-switch-ink: var(--primary-foreground);
+  --shape-switch-duration: 150ms;
+  --shape-brackets-l: 1;
+  --shape-brackets-cut: 0;
+  --shape-brackets-round: 0;
+  --titlebar-height: 40px;
+  color-scheme: dark;
+}
+
+/*
+ * Faction contours (lib/theme.ts sets the mark independently of the palette).
+ * The contours follow the factions' HUDs (textures/ui/<faction>/game in textures.scd): UEF and Cybran have plates with
+ * all four corners cut at 45 degrees, and Cybran buttons, chips and badges end in points like its medium button; Aeon
+ * and Seraphim have rounded plates, capsule buttons and a second line inside panels like the banded Seraphim frames.
+ */
+[data-theme='uef'] {
+  --shape-tl: 0.75;
+  --shape-tr: 0.75;
+  --shape-br: 0.75;
+  --shape-bl: 0.75;
+  --shape-ctl: 0.75;
+  --shape-ctr: 0.75;
+  --shape-cbr: 0.75;
+  --shape-cbl: 0.75;
+  --shape-point: 0%;
+  --shape-radius: 0px;
+  --shape-control-radius: 0px;
+  --shape-panel-radius: 0px;
+  --shape-panel-border: var(--border);
+  --shape-panel-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent);
+  --shape-mark: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  --shape-mark-radius: 0;
+  --shape-mark-size: 18px;
+  --shape-thumb: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  --shape-thumb-radius: 0;
+  --shape-switch-width: 2.25rem;
+  --shape-switch-height: 1.15rem;
+  --shape-switch-inset: 3px;
+  --shape-switch-fill: var(--primary);
+  --shape-switch-ink: var(--primary-foreground);
+  --shape-switch-duration: 150ms;
+  --shape-brackets-l: 0;
+  --shape-brackets-cut: 1;
+  --shape-brackets-round: 0;
+}
+
+[data-theme='aeon'] {
+  --shape-tl: 0;
+  --shape-tr: 0;
+  --shape-br: 0;
+  --shape-bl: 0;
+  --shape-ctl: 0;
+  --shape-ctr: 0;
+  --shape-cbr: 0;
+  --shape-cbl: 0;
+  --shape-point: 0%;
+  --shape-radius: 12px;
+  --shape-control-radius: 999px;
+  --shape-panel-radius: 20px;
+  --shape-panel-border: color-mix(in srgb, var(--primary) 40%, var(--border));
+  --shape-panel-shadow:
+    inset 0 3px 0 0 color-mix(in srgb, var(--primary) 16%, transparent), inset 0 0 0 4px var(--card),
+    inset 0 0 0 5px color-mix(in srgb, var(--primary) 26%, transparent);
+  --shape-mark: none;
+  --shape-mark-radius: 50%;
+  --shape-mark-size: 16px;
+  --shape-thumb: none;
+  --shape-thumb-radius: 50%;
+  --shape-switch-width: 2.25rem;
+  --shape-switch-height: 1.15rem;
+  --shape-switch-inset: 3px;
+  --shape-switch-fill: var(--primary);
+  --shape-switch-ink: var(--primary-foreground);
+  --shape-switch-duration: 150ms;
+  --shape-brackets-l: 0;
+  --shape-brackets-cut: 0;
+  --shape-brackets-round: 1;
+}
+
+[data-theme='cybran'] {
+  --shape-tl: 0.75;
+  --shape-tr: 0.75;
+  --shape-br: 0.75;
+  --shape-bl: 0.75;
+  --shape-ctl: 1.4;
+  --shape-ctr: 1.4;
+  --shape-cbr: 1.4;
+  --shape-cbl: 1.4;
+  --shape-point: 50%;
+  --shape-radius: 0px;
+  --shape-control-radius: 0px;
+  --shape-panel-radius: 0px;
+  --shape-panel-border: var(--border);
+  --shape-panel-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent);
+  --shape-mark: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  --shape-mark-radius: 0;
+  --shape-mark-size: 18px;
+  --shape-thumb: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  --shape-thumb-radius: 0;
+  --shape-switch-width: 2.5rem;
+  --shape-switch-height: 1.25rem;
+  --shape-switch-inset: 5px;
+  --shape-switch-fill: color-mix(in srgb, var(--primary) 12%, var(--background));
+  --shape-switch-ink: var(--primary);
+  --shape-switch-duration: 200ms;
+  --shape-brackets-l: 0;
+  --shape-brackets-cut: 1;
+  --shape-brackets-round: 0;
+}
+
+[data-theme='seraphim'] {
+  --shape-tl: 0;
+  --shape-tr: 0;
+  --shape-br: 0;
+  --shape-bl: 0;
+  --shape-ctl: 0;
+  --shape-ctr: 0;
+  --shape-cbr: 0;
+  --shape-cbl: 0;
+  --shape-point: 0%;
+  --shape-radius: 12px;
+  --shape-control-radius: 999px;
+  --shape-panel-radius: 20px;
+  --shape-panel-border: color-mix(in srgb, var(--primary) 40%, var(--border));
+  --shape-panel-shadow:
+    inset 0 3px 0 0 color-mix(in srgb, var(--primary) 16%, transparent), inset 0 0 0 4px var(--card),
+    inset 0 0 0 5px color-mix(in srgb, var(--primary) 26%, transparent);
+  --shape-mark: none;
+  --shape-mark-radius: 50%;
+  --shape-mark-size: 16px;
+  --shape-thumb: none;
+  --shape-thumb-radius: 50%;
+  --shape-switch-width: 2.25rem;
+  --shape-switch-height: 1.15rem;
+  --shape-switch-inset: 3px;
+  --shape-switch-fill: var(--primary);
+  --shape-switch-ink: var(--primary-foreground);
+  --shape-switch-duration: 150ms;
+  --shape-brackets-l: 0;
+  --shape-brackets-cut: 0;
+  --shape-brackets-round: 1;
+}
+
+/* Resolve aliases locally rather than inheriting the resolved colours of an outer theme. */
+[data-theme] {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-hull: var(--hull);
+  --color-faint: var(--faint);
+}
+
+@theme inline {
+  --font-sans: 'IBM Plex Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Exo 2 Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Cascadia Mono', Consolas, monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-hull: var(--hull);
+  --color-faint: var(--faint);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 14px;
+    line-height: 1.45;
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    user-select: text;
+  }
+
+  /* Tailwind 4 leaves buttons with the arrow cursor; the launcher's cards and chips need to look clickable. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold;
+  }
+
+  /* Exo 2 has a tall ascent and a short descent, so a title sits low in its line and looks lower than the tabs and
+     buttons beside it. The nudge lines its lowercase up with theirs without changing the layout. */
+  h1 {
+    translate: 0 -0.08em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid var(--background);
+    background: var(--input);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@utility selectable {
+  user-select: text;
+}
+
+/*
+ * Plates are the launcher's panels, fields and buttons. Their contour comes from the theme's --shape-* tokens: in
+ * angular themes a clip-path polygon cuts the corners (the default theme cuts the top-left and bottom-right ones, like
+ * the panels of Supreme Commander), in round themes border-radius rounds them. The border follows the contour: an
+ * inset shadow draws the straight edges and four corner gradients draw the cuts, so it works on inputs too.
+ * The fill is the ordinary background colour (bg-*); --plate-border and --plate-line set the border, --cut the size of
+ * the corners. An outer ring would be clipped away, so focus is shown by the border itself (plate-focus).
+ * A plate is a field by default (inputs, rows, thumbnails, containers). plate-control marks buttons, chips, badges and
+ * tabs, which may end in points or be capsules; cut-lg marks panels and cards, which take the theme's panel border and
+ * decoration. --plate-radius-max caps the rounding where a capsule would not fit, as on checkboxes.
+ * The variables do not inherit: a button inside a selected card keeps its own border and corners.
+ */
+@property --plate-border {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --plate-line {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --cut {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --plate-control {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --plate-panel {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --plate-panel-border {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --plate-panel-shadow {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --plate-radius-max {
+  syntax: '*';
+  inherits: false;
+}
+
+@utility plate {
+  /* Corners 1-4 go clockwise from the top left; a control takes the theme's control corners and may end in points. */
+  --plate-x1: calc(var(--cut, 8px) * (var(--shape-tl) + (var(--shape-ctl) - var(--shape-tl)) * var(--plate-control)));
+  --plate-x2: calc(var(--cut, 8px) * (var(--shape-tr) + (var(--shape-ctr) - var(--shape-tr)) * var(--plate-control)));
+  --plate-x3: calc(var(--cut, 8px) * (var(--shape-br) + (var(--shape-cbr) - var(--shape-br)) * var(--plate-control)));
+  --plate-x4: calc(var(--cut, 8px) * (var(--shape-bl) + (var(--shape-cbl) - var(--shape-bl)) * var(--plate-control)));
+  --plate-y1: max(var(--plate-x1), calc(var(--shape-point) * var(--plate-control)));
+  --plate-y2: max(var(--plate-x2), calc(var(--shape-point) * var(--plate-control)));
+  --plate-y3: max(var(--plate-x3), calc(var(--shape-point) * var(--plate-control)));
+  --plate-y4: max(var(--plate-x4), calc(var(--shape-point) * var(--plate-control)));
+  --plate-edge: var(--plate-border, var(--plate-panel-border, var(--color-border)));
+  --plate-polygon: polygon(
+    var(--plate-x1) 0,
+    calc(100% - var(--plate-x2)) 0,
+    100% var(--plate-y2),
+    100% calc(100% - var(--plate-y3)),
+    calc(100% - var(--plate-x3)) 100%,
+    var(--plate-x4) 100%,
+    0 calc(100% - var(--plate-y4)),
+    0 var(--plate-y1)
+  );
+  --plate-radius: min(
+    var(--plate-radius-max, 999px),
+    calc(
+      var(--shape-radius) + (var(--shape-control-radius) - var(--shape-radius)) * var(--plate-control) +
+        (var(--shape-panel-radius) - var(--shape-radius)) * var(--plate-panel)
+    )
+  );
+  clip-path: var(--plate-polygon);
+  background-image:
+    linear-gradient(
+      to bottom right,
+      transparent 50%,
+      var(--plate-edge) 50% calc(50% + var(--plate-line, 1px)),
+      transparent calc(50% + var(--plate-line, 1px))
+    ),
+    linear-gradient(
+      to bottom left,
+      transparent 50%,
+      var(--plate-edge) 50% calc(50% + var(--plate-line, 1px)),
+      transparent calc(50% + var(--plate-line, 1px))
+    ),
+    linear-gradient(
+      to top left,
+      transparent 50%,
+      var(--plate-edge) 50% calc(50% + var(--plate-line, 1px)),
+      transparent calc(50% + var(--plate-line, 1px))
+    ),
+    linear-gradient(
+      to top right,
+      transparent 50%,
+      var(--plate-edge) 50% calc(50% + var(--plate-line, 1px)),
+      transparent calc(50% + var(--plate-line, 1px))
+    );
+  background-position:
+    left top,
+    right top,
+    right bottom,
+    left bottom;
+  background-size:
+    var(--plate-x1) var(--plate-y1),
+    var(--plate-x2) var(--plate-y2),
+    var(--plate-x3) var(--plate-y3),
+    var(--plate-x4) var(--plate-y4);
+  background-repeat: no-repeat;
+  border-radius: var(--plate-radius);
+  box-shadow:
+    inset 0 0 0 var(--plate-line, 1px) var(--plate-edge),
+    var(--plate-panel-shadow, 0 0 #0000);
+}
+
+@utility plate-control {
+  --plate-control: 1;
+}
+
+@utility plate-focus {
+  outline: none;
+
+  &:focus-visible {
+    --plate-border: var(--color-ring);
+    --plate-line: 2px;
+  }
+}
+
+@utility plate-focus-within {
+  &:has(:focus-visible) {
+    --plate-border: var(--color-ring);
+    --plate-line: 2px;
+  }
+}
+
+@utility cut-xs {
+  --cut: 4px;
+}
+
+@utility cut-sm {
+  --cut: 6px;
+}
+
+@utility cut-lg {
+  --cut: 12px;
+  --plate-panel: 1;
+  --plate-panel-border: var(--shape-panel-border);
+  --plate-panel-shadow: var(--shape-panel-shadow);
+}
+
+/*
+ * A picture inside selection marks: a panel whose corners follow the marks. Cut and round marks run along the panel's
+ * contour, the L corners of the default theme frame a rectangle, so there the picture keeps its corners.
+ */
+@utility cut-picture {
+  --cut: calc(12px * (1 - var(--shape-brackets-l)));
+  --plate-panel: 1;
+  --plate-panel-border: var(--shape-panel-border);
+  --plate-panel-shadow: var(--shape-panel-shadow);
+}
+
+/*
+ * Selection marks 6px outside the element, the way the game marks selected units. The theme picks the drawing: L
+ * corners (the default theme), corners cut at 45 degrees (UEF, Cybran) or round corners (Aeon, Seraphim). Marks are
+ * meant for panels (cut-lg): the cut and the arc run parallel to the panel's own, 6px out (a 45-degree cut moves out by
+ * 6px × (2 − √2)), so a mark around a square picture would cross its corner.
+ */
+@utility brackets {
+  position: relative;
+
+  &::after {
+    --bracket: var(--color-primary);
+    --bracket-l: calc(14px * var(--shape-brackets-l));
+    --bracket-cut: calc((12px * var(--shape-tl) + 3.5px) * var(--shape-brackets-cut));
+    --bracket-arm: calc(12px * var(--shape-brackets-cut));
+    --bracket-round: calc((var(--shape-panel-radius) + 6px) * var(--shape-brackets-round));
+    --bracket-slash: transparent 50%, var(--bracket) 50% calc(50% + 2px), transparent calc(50% + 2px);
+    content: '';
+    position: absolute;
+    inset: -6px;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--bracket), var(--bracket)) left top / var(--bracket-l) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) left top / 2px var(--bracket-l),
+      linear-gradient(var(--bracket), var(--bracket)) right top / var(--bracket-l) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) right top / 2px var(--bracket-l),
+      linear-gradient(var(--bracket), var(--bracket)) left bottom / var(--bracket-l) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) left bottom / 2px var(--bracket-l),
+      linear-gradient(var(--bracket), var(--bracket)) right bottom / var(--bracket-l) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) right bottom / 2px var(--bracket-l),
+      linear-gradient(to bottom right, var(--bracket-slash)) left top / var(--bracket-cut) var(--bracket-cut),
+      linear-gradient(to bottom left, var(--bracket-slash)) right top / var(--bracket-cut) var(--bracket-cut),
+      linear-gradient(to top left, var(--bracket-slash)) right bottom / var(--bracket-cut) var(--bracket-cut),
+      linear-gradient(to top right, var(--bracket-slash)) left bottom / var(--bracket-cut) var(--bracket-cut),
+      linear-gradient(var(--bracket), var(--bracket)) left var(--bracket-cut) top 0 / var(--bracket-arm) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) left 0 top var(--bracket-cut) / 2px var(--bracket-arm),
+      linear-gradient(var(--bracket), var(--bracket)) right var(--bracket-cut) top 0 / var(--bracket-arm) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) right 0 top var(--bracket-cut) / 2px var(--bracket-arm),
+      linear-gradient(var(--bracket), var(--bracket)) right var(--bracket-cut) bottom 0 / var(--bracket-arm) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) right 0 bottom var(--bracket-cut) / 2px var(--bracket-arm),
+      linear-gradient(var(--bracket), var(--bracket)) left var(--bracket-cut) bottom 0 / var(--bracket-arm) 2px,
+      linear-gradient(var(--bracket), var(--bracket)) left 0 bottom var(--bracket-cut) / 2px var(--bracket-arm);
+    background-repeat: no-repeat;
+    border: calc(2px * var(--shape-brackets-round)) solid var(--bracket);
+    border-radius: var(--bracket-round);
+    mask:
+      linear-gradient(#000 0 0) left top / 36px 36px no-repeat,
+      linear-gradient(#000 0 0) right top / 36px 36px no-repeat,
+      linear-gradient(#000 0 0) right bottom / 36px 36px no-repeat,
+      linear-gradient(#000 0 0) left bottom / 36px 36px no-repeat;
+    animation: brackets-lock 180ms ease-out;
+  }
+}
+
+@keyframes brackets-lock {
+  from {
+    inset: -16px;
+    opacity: 0;
+  }
+}
+
+/*
+ * With the launcher's animations switched off (lib/motion.ts) panels, dialogs and hints appear at once and nothing
+ * fades. Loading marks keep moving: they show that work goes on. Windows' own animation setting does not reach here,
+ * main switches prefers-reduced-motion off.
+ */
+:root[data-animations='off'] *:not(.animate-spin, .animate-pulse, [data-loading-motion]),
+:root[data-animations='off'] *::before,
+:root[data-animations='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/*
+ * In round themes a plate clips its content to the rounded border rather than to the polygon, so pictures in cards do
+ * not stick out of the corners. The next themed subtree starts its own scope, including when that root is a plate.
+ * A preview or tile therefore keeps its contours at any depth inside a window of a different theme.
+ */
+@scope (:is([data-theme='aeon'], [data-theme='seraphim'])) to ([data-theme]) {
+  :scope.plate:not([data-slot='input-group-control']),
+  .plate:not([data-slot='input-group-control']) {
+    clip-path: inset(0 round var(--plate-radius));
+  }
+}
+
+@scope (:is([data-theme='default'], [data-theme='uef'], [data-theme='cybran'])) to ([data-theme]) {
+  :scope.plate:not([data-slot='input-group-control']),
+  .plate:not([data-slot='input-group-control']) {
+    clip-path: var(--plate-polygon);
+  }
+}
+
+/* An input inside an input group is drawn by the group's plate. Unlayered, so it wins over the input's own utilities. */
+[data-slot='input-group-control'] {
+  clip-path: none;
+  background-image: none;
+  box-shadow: none;
+}
+
+/* Parts of the custom title bar that move the window; buttons and fields inside it must opt out. */
+@utility drag-region {
+  -webkit-app-region: drag;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}
