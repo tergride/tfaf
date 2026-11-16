@@ -1,6 +1,6 @@
 {
   "name": "tfaf-launcher",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "private": true,
   "description": "TFAF desktop client for FAF servers: custom games, maps and mods",
   "author": "Tergride",
