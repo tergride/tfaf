@@ -1,6 +1,22 @@
 # История версий TFAF
 
-<!-- Раздел на версию: заголовок с версией и датой, под ним части ru и en. Формат описан в docs/release.md. -->
+<!-- Раздел на версию: заголовок с версией и датой, под ним части ru и en. -->
+
+## 1.0.0-beta.1 — 2026-11-16
+
+<!-- ru -->
+### Новое
+
+- Исходный код TFAF открыт: он лежит на GitHub в репозитории tergride/tfaf под лицензией GNU GPL v3.
+  - Обновления, история версий в разделе «О программе» и ссылка «Все версии на GitHub» теперь берутся из этого репозитория. Установленные версии находят его сами.
+  - В папке установки появились лицензия TFAF и лицензии ресурсов из других проектов.
+
+<!-- en -->
+### New
+
+- TFAF is now open source: its code is on GitHub in the tergride/tfaf repository under the GNU GPL v3 license.
+  - Updates, the version history on the About page and the All versions on GitHub link now come from that repository. Installed versions find it by themselves.
+  - The installation folder now holds TFAF's license and the licenses of assets from other projects.
 
 ## 0.19.0 — 2026-11-14
 
