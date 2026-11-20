@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -276,10 +275,7 @@ function onOpenChange(open: boolean): void {
                 :aria-checked="lobbyMode === mode"
                 @click="pickLobbyMode(mode)"
               >
-                <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span class="font-display text-sm font-semibold">{{ t(`hostGame.lobbyModes.${mode}.title`) }}</span>
-                  <Badge v-if="mode === 'tfaf'" variant="warning" :data-tooltip="t('tfafLobby.badges.experimentalHint')">{{ t('tfafLobby.badges.experimental') }}</Badge>
-                </span>
+                <span class="font-display text-sm font-semibold">{{ t(`hostGame.lobbyModes.${mode}.title`) }}</span>
                 <span class="text-[13px] leading-snug text-muted-foreground">{{ t(`hostGame.lobbyModes.${mode}.hint`) }}</span>
               </button>
             </div>

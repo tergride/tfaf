@@ -140,7 +140,6 @@ async function leave(): Promise<void> {
         <Badge v-if="featuredModName" variant="accent">{{ featuredModName }}</Badge>
         <Badge variant="accent">{{ t('tfafLobby.badges.tfafOnly') }}</Badge>
         <Badge variant="muted">{{ t('tfafLobby.badges.unrated') }}</Badge>
-        <Badge variant="warning" :data-tooltip="t('tfafLobby.badges.experimentalHint')">{{ t('tfafLobby.badges.experimental') }}</Badge>
         <Badge v-if="quality !== null" variant="muted">{{ t('tfafLobby.quality', { percent: quality }) }}</Badge>
         <Button v-if="!starting" variant="ghost" size="sm" class="ml-auto" @click="inviting = true"><Send />{{ t('games.inviteDialog.open') }}</Button>
         <Button variant="ghost" size="sm" :class="starting && 'ml-auto'" @click="leave"><X />{{ t('tfafLobby.leave') }}</Button>

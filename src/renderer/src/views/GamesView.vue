@@ -579,8 +579,8 @@ async function connect(): Promise<void> {
         <div class="flex flex-wrap gap-1.5">
           <Badge :variant="selected.featuredMod === 'faf' ? 'muted' : 'accent'">{{ selected.featuredModName }}</Badge>
           <Badge v-if="selected.tfafLobby" variant="accent">{{ t('games.detail.tfafLobby') }}</Badge>
-          <Badge v-if="selected.tfafLobby" variant="warning" :data-tooltip="t('tfafLobby.badges.experimentalHint')">{{ t('tfafLobby.badges.experimental') }}</Badge>
-          <Badge v-else-if="selected.passwordProtected" variant="warning"><Lock />{{ t('games.detail.password') }}</Badge>
+          <!-- The server sees every TFAF room as password-protected (lobbyAccess.ts), so its lock says nothing there. -->
+          <Badge v-if="!selected.tfafLobby && selected.passwordProtected" variant="warning"><Lock />{{ t('games.detail.password') }}</Badge>
           <Badge v-if="selected.friendsOnly" variant="info">{{ t('games.detail.friendsOnly') }}</Badge>
         </div>
         <p v-if="selected.tfafLobby" class="text-sm text-muted-foreground">{{ t('games.detail.tfafLobbyHint') }}</p>

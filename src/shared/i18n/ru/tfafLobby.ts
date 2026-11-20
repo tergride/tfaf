@@ -3,8 +3,6 @@ export const tfafLobby = {
   badges: {
     unrated: 'Без рейтинга',
     tfafOnly: 'Только TFAF',
-    experimental: 'Экспериментальный',
-    experimentalHint: 'Режим находится в тестировании: игра может не запуститься или работать нестабильно.',
   },
   waitingForRoom: 'Подключение к хосту…',
   leave: 'Выйти из лобби',

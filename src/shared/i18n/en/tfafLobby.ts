@@ -4,8 +4,6 @@ export const tfafLobby: Messages['tfafLobby'] = {
   badges: {
     unrated: 'Unrated',
     tfafOnly: 'TFAF only',
-    experimental: 'Experimental',
-    experimentalHint: 'This mode is still in testing: a game may fail to start or work unreliably.',
   },
   waitingForRoom: 'Connecting to the host…',
   leave: 'Leave the lobby',
