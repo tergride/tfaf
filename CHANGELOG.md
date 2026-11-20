@@ -2,6 +2,38 @@
 
 <!-- Раздел на версию: заголовок с версией и датой, под ним части ru и en. -->
 
+## 1.1.0-beta.1 — 2026-11-21
+
+<!-- ru -->
+### Новое
+
+- Генератор карт StoneMap (экспериментальный): в новом разделе «Генератор карт» можно сделать свою карту и сразу добавить её к установленным.
+  - Генератор скачивается при первом запуске, около 50 МБ. Пока он работает только на Windows.
+  - Слева все настройки StoneMap: игроки и команды, вода, суша, ресурсы и прочее. У большинства есть «Случайно», и тогда значение выбирает seed.
+  - Если StoneMap не примет настройки, причина видна над ними ещё до генерации.
+  - Превью показывает карту, текстуры, рельеф, ресурсы и высоты, с маркерами, изолиниями и слоем реклейма.
+  - На вкладке «Корректировка» спавны, мексы и гидро можно перетащить или удалить, а «Применить» делает карту с этими изменениями.
+  - «Сохранить в карты» добавляет карту к установленным, «ZIP» сохраняет её архивом. Сделанные карты остаются в «Истории».
+- Карту StoneMap можно выбрать в лобби TFAF (экспериментально): лаунчеры остальных игроков сами сгенерируют ту же карту.
+  - Карту получат только игроки с этой версией TFAF или новее.
+  - Большая карта может генерироваться больше минуты.
+- Лобби TFAF больше не помечено как экспериментальное.
+
+<!-- en -->
+### New
+
+- StoneMap map generator (experimental): the new Map generator section lets you make your own map and add it to your installed maps right away.
+  - The generator is downloaded on first launch, about 50 MB. For now it works only on Windows.
+  - All StoneMap settings are on the left: players and teams, water, land, resources and more. Most of them have a Random option, which leaves the value to the seed.
+  - If StoneMap would refuse the settings, the reason shows above them before you generate.
+  - The preview shows the map, textures, relief, resources and heights, with markers, contour lines and the reclaim layer.
+  - On the Adjust tab, spawns, mexes and hydros can be dragged or deleted, and Apply makes the map with these changes.
+  - Save to maps adds the map to your installed maps, and ZIP saves it as an archive. Generated maps stay in History.
+- A StoneMap map can be picked in a TFAF lobby (experimental): the other players' launchers generate the same map by themselves.
+  - Only players with this TFAF version or newer get the map.
+  - A large map can take more than a minute to generate.
+- The TFAF lobby is no longer marked as experimental.
+
 ## 1.0.0 — 2026-11-16
 
 <!-- ru -->
