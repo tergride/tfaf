@@ -24,7 +24,8 @@ const NETWORK_APIS = ['fetch', 'XMLHttpRequest', 'WebSocket', 'EventSource'];
 const NO_NETWORK = 'The renderer does not go to the network: main does it and answers over IPC.';
 
 export default defineConfig([
-  globalIgnores(['out/', 'dist/', 'resources/', 'build/']),
+  // StoneMap's API types and parameter catalog are generated from its C# contracts and copied as they are.
+  globalIgnores(['out/', 'dist/', 'resources/', 'build/', 'src/shared/stoneMap/contracts.ts', 'src/shared/stoneMap/catalog.ts']),
 
   {
     linterOptions: { reportUnusedDisableDirectives: 'error', reportUnusedInlineConfigs: 'error' },

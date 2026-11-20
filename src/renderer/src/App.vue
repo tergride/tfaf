@@ -17,6 +17,7 @@ import {
   Medal,
   Menu,
   MessagesSquare,
+  Mountain,
   Newspaper,
   Power,
   Puzzle,
@@ -82,6 +83,7 @@ const GamesView = lazyView(() => import('./views/GamesView.vue'));
 const LeaderboardsView = lazyView(() => import('./views/LeaderboardsView.vue'));
 const LinksView = lazyView(() => import('./views/LinksView.vue'));
 const MapsView = lazyView(() => import('./views/MapsView.vue'));
+const MapGeneratorView = lazyView(() => import('./views/MapGeneratorView.vue'));
 const MatchmakerView = lazyView(() => import('./views/MatchmakerView.vue'));
 const ModsView = lazyView(() => import('./views/ModsView.vue'));
 const NewsView = lazyView(() => import('./views/NewsView.vue'));
@@ -117,6 +119,7 @@ type ViewId =
   | 'chat'
   | 'replays'
   | 'maps'
+  | 'mapGenerator'
   | 'mods'
   | 'news'
   | 'leaderboards'
@@ -153,6 +156,7 @@ const NAVIGATION: NavigationGroup[] = [
       { id: 'chat', label: 'app.nav.chat', icon: MessagesSquare, view: ChatView },
       { id: 'replays', label: 'app.nav.replays', icon: Film, view: ReplaysView },
       { id: 'maps', label: 'app.nav.maps', icon: MapIcon, view: MapsView },
+      { id: 'mapGenerator', label: 'app.nav.mapGenerator', icon: Mountain, view: MapGeneratorView },
       { id: 'mods', label: 'app.nav.mods', icon: Puzzle, view: ModsView },
     ],
   },

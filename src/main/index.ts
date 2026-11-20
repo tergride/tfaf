@@ -69,6 +69,8 @@ import { isOpenableLink } from './servers.ts';
 import { SettingsStore } from './settings.ts';
 import { configureStorage } from './storage.ts';
 import { SoundPlayer } from './sounds.ts';
+import { developmentExecutable, StoneMapBuilds } from './stoneMap/stoneMapBuild.ts';
+import { StoneMapService } from './stoneMap/stoneMapService.ts';
 import { taskbarProgress } from './taskbar.ts';
 import { TaskReporter } from './tasks.ts';
 import { AppTray } from './tray.ts';
@@ -479,7 +481,15 @@ async function start(): Promise<void> {
   const manifests = new ManifestStore(path.join(app.getPath('userData'), 'vault-manifests'));
   const runtime = new RuntimeComponents(settings, tasks, userAgent);
   const generator = new MapGenerator(runtime, settings, tasks, userAgent);
-  const maps = new MapService(api, auth, settings, tasks, userAgent, manifests, generator);
+  const stoneMap = new StoneMapService({
+    settings,
+    tasks,
+    builds: new StoneMapBuilds(() => runtime.runtimeDirectory, tasks, userAgent),
+    developmentExecutable: developmentExecutable(app.isPackaged),
+    onState: (state) => send(IPC.stoneMapStateChanged, state),
+    onJob: (job) => send(IPC.stoneMapJobChanged, job),
+  });
+  const maps = new MapService(api, auth, settings, tasks, userAgent, manifests, generator, stoneMap);
   const mods = new ModService(api, settings, tasks, userAgent, manifests);
   const leagues = new LeagueService(api, auth);
   const notifier = new DesktopNotifier(() => mainWindow, settings);
@@ -503,6 +513,7 @@ async function start(): Promise<void> {
       settings,
       lobby,
       maps,
+      stoneMap,
       mods,
       updater,
       tasks,
@@ -753,9 +764,10 @@ async function start(): Promise<void> {
       return;
     }
     quitting = true;
-    if (games.getState().phase !== 'idle') {
+    const gameRunning = games.getState().phase !== 'idle';
+    if (gameRunning || stoneMap.getState().phase !== 'stopped') {
       event.preventDefault();
-      void games.shutdown(GAME_SHUTDOWN_GRACE_MS).finally(() => app.quit());
+      void Promise.allSettled([gameRunning ? games.shutdown(GAME_SHUTDOWN_GRACE_MS) : null, stoneMap.stop()]).finally(() => app.quit());
     }
   });
 
@@ -788,6 +800,7 @@ async function start(): Promise<void> {
       matchmaker,
       runtime,
       generator,
+      stoneMap,
       notifications,
       clans: new ClanService(api),
       notes,

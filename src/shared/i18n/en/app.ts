@@ -9,6 +9,7 @@ export const app: Messages['app'] = {
     chat: 'Chat',
     replays: 'Replays',
     maps: 'Maps',
+    mapGenerator: 'Map generator',
     mods: 'Mods',
     community: 'Community',
     news: 'News',

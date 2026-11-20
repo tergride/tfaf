@@ -5,6 +5,7 @@ import type { CurrentGameDetails, GameSessionState, HostGameOptions, LobbyNotice
 import type { FafApi } from '../api/fafApi.ts';
 import type { LobbyService } from '../lobby/lobbyService.ts';
 import type { SettingsStore } from '../settings.ts';
+import type { StoneMapService } from '../stoneMap/stoneMapService.ts';
 import type { TaskReporter } from '../tasks.ts';
 import type { MapService } from '../vault/mapService.ts';
 import type { ModService } from '../vault/modService.ts';
@@ -29,6 +30,8 @@ export interface GameRunnerDependencies {
   settings: SettingsStore;
   lobby: LobbyService;
   maps: MapService;
+  /** Makes a StoneMap map of a TFAF room for a player who does not have it. */
+  stoneMap: Pick<StoneMapService, 'buildId' | 'rememberRecipe'>;
   mods: ModService;
   updater: GameUpdater;
   tasks: TaskReporter;

@@ -102,6 +102,14 @@ import type { LiveReplayTracker } from './replays/liveReplayTracker.ts';
 import type { ReplayService } from './replays/replayService.ts';
 import type { FriendList } from './lobby/friendList.ts';
 import type { LobbyService } from './lobby/lobbyService.ts';
+import type { StoneMapService } from './stoneMap/stoneMapService.ts';
+import {
+  parsePresentation,
+  parsePreviewOptions,
+  parseStoneMapBody,
+  parseStoneMapJobId,
+  parseStoneMapJobLimit,
+} from './stoneMap/stoneMapValidation.ts';
 import type { MapGenerator } from './vault/mapGenerator.ts';
 import type { MapService } from './vault/mapService.ts';
 import type { MapViewService } from './mapView/mapViewService.ts';
@@ -143,6 +151,7 @@ export interface IpcServices {
   matchmaker: MatchmakerService;
   runtime: RuntimeComponents;
   generator: MapGenerator;
+  stoneMap: StoneMapService;
   notifications: NotificationCenter;
   clans: ClanService;
   notes: PlayerNotesStore;
@@ -469,7 +478,11 @@ export function registerIpc(services: IpcServices, getWindow: () => BrowserWindo
     return mods.checkAll();
   });
 
-  const oldVersions = async (): Promise<OldVersionFile[]> => [...(await runtime.oldVersions()), ...(await generator.oldVersions())];
+  const oldVersions = async (): Promise<OldVersionFile[]> => [
+    ...(await runtime.oldVersions()),
+    ...(await generator.oldVersions()),
+    ...(await services.stoneMap.oldVersions()),
+  ];
   handle(IPC.storageOldVersions, async () => (await oldVersions()).map(({ title, bytes }) => ({ title, bytes })));
   // A game being prepared may be about to run an older generator, and a matchmaker search has its generators ready.
   handle(IPC.storageRemoveOldVersions, async () => {
@@ -506,6 +519,54 @@ export function registerIpc(services: IpcServices, getWindow: () => BrowserWindo
 
   handle(IPC.generatorOptions, async () => generator.options(await generator.latestVersion()));
   handle(IPC.generatorGenerate, (request) => generator.generateCustom(parseCustomMapRequest(request)));
+
+  const { stoneMap } = services;
+  handle(IPC.stoneMapGetState, () => stoneMap.getState());
+  handle(IPC.stoneMapStart, () => stoneMap.start());
+  handle(IPC.stoneMapCapabilities, () => stoneMap.capabilities());
+  handle(IPC.stoneMapResolve, (request) => stoneMap.resolve(parseStoneMapBody(request)));
+  handle(IPC.stoneMapGenerate, (request) => stoneMap.generate(parseStoneMapBody(request)));
+  handle(IPC.stoneMapJobs, (limit) => stoneMap.jobs(parseStoneMapJobLimit(limit)));
+  handle(IPC.stoneMapJob, (id) => stoneMap.job(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapCancel, (id) => stoneMap.cancel(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapRemove, (id) => stoneMap.remove(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapResult, (id) => stoneMap.result(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapResources, (id) => stoneMap.resources(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapReclaim, (id) => stoneMap.reclaim(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapNavigation, (id) => stoneMap.navigation(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapFiles, (id) => stoneMap.files(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapHeightmap, (id) => stoneMap.heightmap(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapPreview, (id, options) => stoneMap.preview(parseStoneMapJobId(id), parsePreviewOptions(options)));
+  handle(IPC.stoneMapTextureLayers, (id) => stoneMap.textureLayers(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapTextureAssets, () => stoneMap.textureAssets());
+  handle(IPC.stoneMapUseGameTextures, (enabled) => stoneMap.useGameTextures(parseBoolean(enabled)));
+  handle(IPC.stoneMapUpdatePresentation, (id, presentation) =>
+    stoneMap.updatePresentation(parseStoneMapJobId(id), parsePresentation(presentation)),
+  );
+  handle(IPC.stoneMapAdjustments, (id) => stoneMap.adjustments(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapMoveAdjustment, (id, move) => stoneMap.moveAdjustment(parseStoneMapJobId(id), parseStoneMapBody(move)));
+  handle(IPC.stoneMapDeleteAdjustment, (id, deletion) => stoneMap.deleteAdjustment(parseStoneMapJobId(id), parseStoneMapBody(deletion)));
+  handle(IPC.stoneMapAdjustmentPlacement, (id, request) =>
+    stoneMap.adjustmentPlacement(parseStoneMapJobId(id), parseStoneMapBody(request)),
+  );
+  handle(IPC.stoneMapApplyAdjustments, (id, draft) => stoneMap.applyAdjustments(parseStoneMapJobId(id), parseStoneMapBody(draft)));
+  handle(IPC.stoneMapSaveToMaps, (id) => stoneMap.saveToMaps(parseStoneMapJobId(id)));
+  handle(IPC.stoneMapExportZip, async (id) => {
+    const jobId = parseStoneMapJobId(id);
+    const options: Electron.SaveDialogOptions = {
+      title: t('main.stoneMap.zipDialog'),
+      defaultPath: path.join(app.getPath('downloads'), await stoneMap.zipName(jobId)),
+      filters: [{ name: t('main.stoneMap.zipFilter'), extensions: ['zip'] }],
+      properties: ['showOverwriteConfirmation'],
+    };
+    const window = getWindow();
+    const choice = window ? await dialog.showSaveDialog(window, options) : await dialog.showSaveDialog(options);
+    if (choice.canceled || !choice.filePath) {
+      return false;
+    }
+    await stoneMap.exportZip(jobId, choice.filePath);
+    return true;
+  });
 
   handle(IPC.appUpdateGetState, () => appUpdates.getState());
   handle(IPC.appUpdateCheck, () => appUpdates.check());

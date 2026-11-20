@@ -64,7 +64,8 @@ export class LobbyFiles {
     this.deps = deps;
     this.gameVersion = prepared.localFiles.gameVersion;
     this.gameFiles = prepared.fingerprint.gameFiles;
-    this.mapFolderName = mapFolderName || null;
+    // A map the preparation left out (a StoneMap map that comes with the room's recipe) is brought in on the first follow.
+    this.mapFolderName = prepared.localFiles.map === null ? null : mapFolderName || null;
     this.map = { state: prepared.localFiles.map, digest: prepared.fingerprint.map };
     if (this.mapFolderName) {
       this.maps.set(this.mapFolderName.toLowerCase(), this.map);

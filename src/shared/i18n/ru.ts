@@ -26,6 +26,7 @@ import { reviews } from './ru/reviews.ts';
 import { links } from './ru/links.ts';
 import { about } from './ru/about.ts';
 import { tfafLobby } from './ru/tfafLobby.ts';
+import { stoneMap } from './ru/stoneMap.ts';
 
 // The source of the keys: every text of the interface, by screen. en.ts must have the same shape.
 export const ru = {
@@ -56,6 +57,7 @@ export const ru = {
   links,
   about,
   tfafLobby,
+  stoneMap,
   main,
 };
 

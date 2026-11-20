@@ -29,6 +29,30 @@ import type { MatchmakerFaction, MatchmakerMapPool, MatchmakerPlayer, Matchmaker
 import type { AvatarChoice, ClanInfo, ModerationReportInput, ModerationReportItem, PlayerAvatar, PlayerProfile, PlayerSearchResult, PlayerStatistics, ProfileAchievement, ProfilePeriod, RatingHistoryPoint } from './profile.ts';
 import type { LiveGame, LiveReplayAction, LiveReplayTracking, LocalReplay, ReplayDetails, ReplayQuery, VaultReplay } from './replays.ts';
 import type { PathField, PathsStatus, Settings, SettingsPatch, SoundId, TurnServer } from './settings.ts';
+import type {
+  AdjustmentDelete,
+  AdjustmentMove,
+  AdjustmentPlacementMap,
+  AdjustmentPlacementRequest,
+  AdjustmentScene,
+  GenerationCapabilities,
+  GenerationRequest,
+  MapAdjustments,
+  MapFile,
+  MapPresentation,
+  MapResources,
+  MapResult,
+  NavigationReport,
+  PreviewOptions,
+  ReclaimPoint,
+  ResolvedParameters,
+  StoneMapJob,
+  StoneMapJobList,
+  StoneMapSavedMap,
+  StoneMapState,
+  StoneMapTextureAssets,
+  StoneMapTextureLayer,
+} from './stoneMap.ts';
 import type { LobbyAction, LobbyCatalog, LobbyPresets, LobbyUnitCatalog } from './tfafLobby.ts';
 import type { UnitDatabaseId } from './unitDatabases.ts';
 import type { LocalMap, LocalMod, MapQuery, MapVaultCheck, ModQuery, Page, ReviewInput, ReviewKind, ReviewTarget, UploadCandidate, VaultMap, VaultMod, VaultReview } from './vault.ts';
@@ -267,6 +291,50 @@ export interface TfafApi {
     options(): Promise<GeneratorOptionLists>;
     /** Generates a map into the maps folder and returns its folder name, which is also the map name of a game. */
     generate(request: CustomMapRequest): Promise<string>;
+  };
+  /** StoneMap, a map generator with its own local API; every call but getState starts it first. */
+  stoneMap: {
+    getState(): Promise<StoneMapState>;
+    onStateChanged(listener: (state: StoneMapState) => void): () => void;
+    /** Every snapshot of the jobs this launcher queued, until each ends. */
+    onJobChanged(listener: (job: StoneMapJob) => void): () => void;
+    /** Downloads the generator if needed and starts it. */
+    start(): Promise<void>;
+    capabilities(): Promise<GenerationCapabilities>;
+    /** Checks a request without generating: the canonical recipe, the seed and what the generator would choose. */
+    resolve(request: GenerationRequest): Promise<ResolvedParameters>;
+    generate(request: GenerationRequest): Promise<StoneMapJob>;
+    /** The newest jobs first, at most STONEMAP_MAX_JOBS. */
+    jobs(limit: number): Promise<StoneMapJobList>;
+    job(id: string): Promise<StoneMapJob>;
+    cancel(id: string): Promise<StoneMapJob>;
+    /** Deletes a finished job with its files; a copy saved to the maps folder stays. */
+    remove(id: string): Promise<void>;
+    result(id: string): Promise<MapResult>;
+    resources(id: string): Promise<MapResources>;
+    reclaim(id: string): Promise<ReclaimPoint[]>;
+    navigation(id: string): Promise<NavigationReport>;
+    files(id: string): Promise<MapFile[]>;
+    /** Heights as uint16 little-endian, (mapSize + 1)² samples by rows, 1/128 per unit. */
+    heightmap(id: string): Promise<Uint8Array<ArrayBuffer>>;
+    /** A PNG. */
+    preview(id: string, options: PreviewOptions): Promise<Uint8Array<ArrayBuffer>>;
+    textureLayers(id: string): Promise<StoneMapTextureLayer[]>;
+    textureAssets(): Promise<StoneMapTextureAssets>;
+    /** The textures preview with the game's textures from the game folder, or in plain colours. */
+    useGameTextures(enabled: boolean): Promise<StoneMapTextureAssets>;
+    /** Sets the map's name and description without generating it again; save or export it again afterwards. */
+    updatePresentation(id: string, presentation: MapPresentation): Promise<MapResult>;
+    adjustments(id: string): Promise<AdjustmentScene>;
+    moveAdjustment(id: string, move: AdjustmentMove): Promise<MapAdjustments>;
+    deleteAdjustment(id: string, deletion: AdjustmentDelete): Promise<MapAdjustments>;
+    adjustmentPlacement(id: string, request: AdjustmentPlacementRequest): Promise<AdjustmentPlacementMap>;
+    /** Queues the adjusted map as a new job. */
+    applyAdjustments(id: string, draft: MapAdjustments): Promise<StoneMapJob>;
+    /** Copies the map into the maps folder of the vault. */
+    saveToMaps(id: string): Promise<StoneMapSavedMap>;
+    /** Asks where to save the map's ZIP and writes it there; false when the user cancelled. */
+    exportZip(id: string): Promise<boolean>;
   };
   chat: {
     getState(): Promise<ChatState>;

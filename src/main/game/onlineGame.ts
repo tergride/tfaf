@@ -1,3 +1,4 @@
+import { isStoneMapFolder } from '../../shared/contract.ts';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { describeError } from '../errors.ts';
@@ -108,8 +109,10 @@ export class OnlineGame {
   ): Promise<void> {
     const { api, lobby, settings, maps } = this.deps;
     const { launch, self } = this;
+    // In a TFAF room a StoneMap map is made from the room's recipe, which arrives only once the players connect.
+    const roomBringsMap = gameless && launch.mapName !== null && isStoneMapFolder(launch.mapName);
     const [, iceSession] = await Promise.all([
-      launch.mapName ? maps.ensureInstalled(launch.mapName) : Promise.resolve(),
+      launch.mapName && !roomBringsMap ? maps.ensureInstalled(launch.mapName) : Promise.resolve(),
       api.getJson(`/ice/session/game/${launch.uid}`),
     ]);
     const session = parseIceSession(iceSession, settings.get().preferredTurnIds);

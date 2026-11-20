@@ -8,6 +8,7 @@ export const app = {
     chat: 'Чат',
     replays: 'Реплеи',
     maps: 'Карты',
+    mapGenerator: 'Генератор карт',
     mods: 'Моды',
     community: 'Сообщество',
     news: 'Новости',

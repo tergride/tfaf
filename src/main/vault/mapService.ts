@@ -1,7 +1,7 @@
 import { shell } from 'electron';
 import { readdir, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
-import type { LocalCheckState, LocalMap, MapQuery, MapVaultCheck, Page, VaultMap } from '../../shared/contract.ts';
+import { isStoneMapFolder, type LocalCheckState, type LocalMap, type MapQuery, type MapVaultCheck, type Page, type VaultMap } from '../../shared/contract.ts';
 import type { AuthService } from '../auth/authService.ts';
 import type { FafApi } from '../api/fafApi.ts';
 import { asString, resolveDocument } from '../api/jsonApi.ts';
@@ -15,6 +15,7 @@ import { isGeneratedMap } from '../lobby/lobbyProtocol.ts';
 import { isFafHttpsUrl } from '../servers.ts';
 import { isValidGamePath } from '../gameLocator.ts';
 import type { SettingsStore } from '../settings.ts';
+import type { StoneMapService } from '../stoneMap/stoneMapService.ts';
 import type { TaskReporter } from '../tasks.ts';
 import { toVaultMap } from './apiMappers.ts';
 import { downloadToTempFile, progressFraction } from './download.ts';
@@ -77,6 +78,7 @@ export class MapService {
   private readonly scenarios = new ParsedFileCache<ScenarioInfo>();
   private readonly manifests: ManifestStore;
   private readonly generator: MapGenerator;
+  private readonly stoneMap: Pick<StoneMapService, 'installMap'>;
 
   constructor(
     api: FafApi,
@@ -86,10 +88,12 @@ export class MapService {
     userAgent: string,
     manifests: ManifestStore,
     generator: MapGenerator,
+    stoneMap: Pick<StoneMapService, 'installMap'>,
   ) {
     this.api = api;
     this.manifests = manifests;
     this.generator = generator;
+    this.stoneMap = stoneMap;
     this.auth = auth;
     this.settings = settings;
     this.tasks = tasks;
@@ -143,6 +147,11 @@ export class MapService {
     const install = work().finally(() => this.folderInstalls.delete(key));
     this.folderInstalls.set(key, install);
     return install;
+  }
+
+  /** The map is in the maps folder of the vault. */
+  async hasCustomMap(folderName: string): Promise<boolean> {
+    return (await this.findCustomMap(folderName)) !== null;
   }
 
   async uninstall(folderName: string): Promise<void> {
@@ -258,7 +267,7 @@ export class MapService {
         : { state: 'unchecked', digest: null, note: null };
     }
     // The generator makes the same files from the same name on every computer; the vault has no copy.
-    if (isGeneratedMap(folderName)) {
+    if (isGeneratedMap(folderName) || isStoneMapFolder(folderName)) {
       return { state: 'notInVault', digest: await folderDigest(directory), note: null };
     }
     const url = this.vaultArchiveUrl(folderName);
@@ -297,7 +306,7 @@ export class MapService {
 
   /** The folder of the map's latest vault version when it is newer; official and generated maps have none. */
   async newerVersion(folderName: string): Promise<string | null> {
-    if (OFFICIAL_MAP_NAMES.has(folderName.toLowerCase()) || isGeneratedMap(folderName)) {
+    if (OFFICIAL_MAP_NAMES.has(folderName.toLowerCase()) || isGeneratedMap(folderName) || isStoneMapFolder(folderName)) {
       return null;
     }
     const document = resolveDocument(
@@ -316,7 +325,7 @@ export class MapService {
     if (local) {
       return { small: local, large: local };
     }
-    if (isGeneratedMap(folderName)) {
+    if (isGeneratedMap(folderName) || isStoneMapFolder(folderName)) {
       return null;
     }
     const previews = `${this.auth.getServer().contentBaseUrl}/maps/previews`;
@@ -355,6 +364,11 @@ export class MapService {
     }
     if (isGeneratedMap(folderName)) {
       await this.generator.generate(folderName);
+      return;
+    }
+    // The vault has no StoneMap maps; a TFAF room sends how to make one.
+    if (isStoneMapFolder(folderName)) {
+      await this.stoneMap.installMap(folderName);
       return;
     }
     await this.downloadAndInstall(folderName, this.vaultArchiveUrl(folderName));

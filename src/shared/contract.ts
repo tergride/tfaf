@@ -17,6 +17,7 @@ export * from './contract/matchmaker.ts';
 export * from './contract/profile.ts';
 export * from './contract/replays.ts';
 export * from './contract/settings.ts';
+export * from './contract/stoneMap.ts';
 export * from './contract/tfafLobby.ts';
 export * from './contract/unitDatabases.ts';
 export * from './contract/vault.ts';

@@ -2,6 +2,7 @@
 // when the host presses Start. The host's launcher owns the room; every other launcher shows its latest snapshot.
 
 import type { MapTexture } from './mapView.ts';
+import type { StoneMapRecipe } from './stoneMap.ts';
 
 /** How a game is created: the game's own lobby, open to every FAF player, or a room in the launcher for TFAF players. */
 export type LobbyMode = 'faf' | 'tfaf';
@@ -104,6 +105,8 @@ export interface LobbyMap {
   spots: LobbySpot[];
   /** Mass points follow the positions that are played (`AdaptiveMap` of the scenario). */
   adaptive: boolean;
+  /** How a player without this StoneMap map makes it; launchers before StoneMap leave it out. */
+  recipe?: StoneMapRecipe;
 }
 
 export interface LobbySimMod {

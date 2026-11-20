@@ -2,6 +2,7 @@
 // everything is checked here, and anything out of shape is dropped.
 
 import {
+  isStoneMapFolder,
   isTfafLobbyFeaturedMod,
   LOBBY_AUTO_TEAMS,
   LOBBY_LIMITS,
@@ -26,6 +27,7 @@ import {
 } from '../../../shared/contract.ts';
 import { isRestrictionKey } from '../../../shared/tfafLobby.ts';
 import { asObject, asString } from '../../api/jsonApi.ts';
+import { parseStoneMapRecipe } from '../../stoneMap/stoneMapRecipe.ts';
 import { isSafeFolderName } from '../../vault/fsUtil.ts';
 
 export type LobbyWireMessage =
@@ -288,7 +290,12 @@ function parseMap(input: unknown): LobbyMap | null {
     isSafeFolderName(file) &&
     file.toLowerCase().endsWith('_scenario.lua') &&
     rest.length === 0;
-  return valid ? { folderName, name: mapName, scenario, spots, adaptive: raw?.adaptive === true } : null;
+  if (!valid) {
+    return null;
+  }
+  // A recipe that does not check out is left out: the player then needs the map like any map outside the vault.
+  const recipe = isStoneMapFolder(folderName) ? parseStoneMapRecipe(raw?.recipe) : null;
+  return { folderName, name: mapName, scenario, spots, adaptive: raw?.adaptive === true, ...(recipe ? { recipe } : {}) };
 }
 
 function parseSimMod(input: unknown): LobbySimMod | null {

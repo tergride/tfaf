@@ -167,6 +167,35 @@ describe('lobby files', () => {
     assert.equal(updates.length, 2);
   });
 
+  it('brings in a map the preparation left out once the lobby names it, even under the same name', async () => {
+    const calls: string[] = [];
+    const updates: LobbyFilesUpdate[] = [];
+    const withoutMap: PreparedFiles = {
+      ...prepared,
+      localFiles: { ...prepared.localFiles, map: null },
+      fingerprint: { ...prepared.fingerprint, map: null, mapKey: null },
+    };
+    const files = new LobbyFiles(
+      {
+        maps: {
+          ensureInstalled: async (folderName) => {
+            calls.push(`install ${folderName}`);
+          },
+          verify: async (folderName) => ({ state: 'notInVault', digest: `digest-${folderName}`, note: null }),
+        },
+        mods: { ensureInstalled: async () => undefined, verify: async () => ({ notes: [], mods: [] }) },
+        notice: () => undefined,
+        onUpdate: (update) => updates.push(update),
+      },
+      withoutMap,
+      'stonemap_512_0123456789abcdef',
+    );
+    files.follow({ mapFolderName: 'stonemap_512_0123456789abcdef', simMods: null });
+    await settled();
+    assert.deepEqual(calls, ['install stonemap_512_0123456789abcdef']);
+    assert.equal(updates.at(-1)?.fingerprint.map, 'digest-stonemap_512_0123456789abcdef');
+  });
+
   it('shows a mod it could not prepare as unchecked and stops with the game', async () => {
     const { files, notices, updates } = lobbyFiles(['broken']);
     files.follow(lobby('map-a', 'm28', 'broken'));

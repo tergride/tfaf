@@ -26,6 +26,7 @@ import { reviews } from './en/reviews.ts';
 import { links } from './en/links.ts';
 import { about } from './en/about.ts';
 import { tfafLobby } from './en/tfafLobby.ts';
+import { stoneMap } from './en/stoneMap.ts';
 import type { Messages } from './ru.ts';
 
 export const en: Messages = {
@@ -56,5 +57,6 @@ export const en: Messages = {
   links,
   about,
   tfafLobby,
+  stoneMap,
   main,
 };

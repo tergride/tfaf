@@ -18,7 +18,7 @@ import type {
   LobbyRoom,
   LobbySimMod,
 } from '../../shared/contract.ts';
-import { isTfafLobbyFeaturedMod } from '../../shared/contract.ts';
+import { isStoneMapFolder, isTfafLobbyFeaturedMod } from '../../shared/contract.ts';
 import { resolveTheme } from '../../shared/themes.ts';
 import { CancelledError, describeError } from '../errors.ts';
 import { isValidGamePath } from '../gameLocator.ts';
@@ -94,6 +94,7 @@ import {
   SCREEN_LOGO,
 } from './tfafLobby/roomLaunchScript.ts';
 import { ddsFromBgra } from './tfafLobby/screenLogo.ts';
+import { readStoneMapRecipe } from '../stoneMap/stoneMapRecipe.ts';
 import { readLobbyMap } from './tfafLobby/lobbyMapInfo.ts';
 import { LAST_GAME_PRESET, validOptions } from './tfafLobby/lobbyMemory.ts';
 import { createRoom, type NewMember, presetOf, type RoomMemory } from './tfafLobby/lobbyRoom.ts';
@@ -506,7 +507,10 @@ export class GameRunner {
       this.lobbyAnswer = { gameId: game.id, at: Date.now(), features: told };
       return 'passwordRequired';
     }
-    const plan: StagePlan[] = [lobbyStage(), ...preparePlan(game.mapFolderName, gameSimMods(game), null), serverJoinStage(), openLobbyStage()];
+    // A StoneMap map comes with the room's recipe, which arrives only after joining; the room's files bring it in then.
+    const deferMap = isStoneMapFolder(game.mapFolderName) && !(await this.deps.maps.hasCustomMap(game.mapFolderName));
+    const preparedMap = deferMap ? '' : game.mapFolderName;
+    const plan: StagePlan[] = [lobbyStage(), ...preparePlan(preparedMap, gameSimMods(game), null), serverJoinStage(), openLobbyStage()];
     void this.run(lobbyTitle(game.title), 'online', plan, async (startup) => {
       const hostFeatures = await startup.run('lobby', async () => (told === undefined ? this.hostFeatures(game) : told));
       if (!hasFeature(hostFeatures, 'launcherLobby')) {
@@ -517,7 +521,7 @@ export class GameRunner {
       }
       this.joined = { gameId: game.id, password };
       this.access = { gameId: game.id, password: checkedPassword };
-      const prepared = await this.preparation.prepare(startup, game.featuredMod, gameSimMods(game), game.mapFolderName, null);
+      const prepared = await this.preparation.prepare(startup, game.featuredMod, gameSimMods(game), preparedMap, null);
       this.setPhase('waitingForServer');
       const launch = await startup.run('server', () => this.deps.lobby.requestJoinGame(game.id, checkedPassword));
       const details = gameDetails(this.deps.maps, game.featuredMod, game.mapFolderName, prepared.localFiles);
@@ -663,10 +667,12 @@ export class GameRunner {
     await this.deps.maps.ensureInstalled(folderName);
     const folder = await this.gameFiles.mapFolder(folderName);
     const map = folder ? await readLobbyMap(folder) : null;
-    if (!map) {
+    if (!folder || !map) {
       throw new Error(t('main.tfafLobby.mapUnreadable', { map: folderName }));
     }
-    return map;
+    // Players without a StoneMap map make it from its recipe; the vault has none to download.
+    const recipe = isStoneMapFolder(folderName) ? await readStoneMapRecipe(folder, this.deps.stoneMap.buildId) : null;
+    return recipe ? { ...map, recipe } : map;
   }
 
   private async loadRoomMods(modUids: string[]): Promise<LobbySimMod[]> {
@@ -748,7 +754,12 @@ export class GameRunner {
           rememberSeat: (seat) => this.deps.lobbyMemory.update(seat),
           rememberedSeat: { faction: this.deps.lobbyMemory.current.faction, color: this.deps.lobbyMemory.current.color },
           onRoomFull: () => this.events.onGameFull(this.state.title, null),
-          followFiles: (room) => this.lobbyFiles?.follow({ mapFolderName: room.map.folderName, simMods: room.simMods }),
+          followFiles: (room) => {
+            if (room.map.recipe) {
+              this.deps.stoneMap.rememberRecipe(room.map.folderName, room.map.recipe);
+            }
+            this.lobbyFiles?.follow({ mapFolderName: room.map.folderName, simMods: room.simMods });
+          },
           resolveLaunch: (room) => this.resolveRoomLaunch(room),
           launchGame: (room, launch) => this.launchRoom(room, launch),
           onStartRefused: (error) => this.toast('error', t('main.tfafLobby.startRefused', { error: describeError(error) })),
