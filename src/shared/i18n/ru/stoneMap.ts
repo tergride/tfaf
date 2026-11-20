@@ -14,6 +14,7 @@ export const stoneMap = {
   copy: 'Копировать запрос в JSON',
   copied: 'Запрос генерации скопирован в буфер обмена.',
   copyFailed: 'Не удалось скопировать запрос в буфер обмена.',
+  invalidSettings: 'StoneMap не примет эти настройки: {error}',
   generate: 'Сгенерировать карту',
   validated: 'Настройки в порядке, генерация не запускалась. Seed {seed}, рецепт {mapName}',
   mapSize: '{km} × {km} км',
@@ -33,6 +34,7 @@ export const stoneMap = {
     seed: 'Seed',
     seedPlaceholder: 'Пусто — случайный',
     reroll: 'Случайный seed',
+    invalidSeed: 'Seed должен быть целым числом от −9223372036854775808 до 9223372036854775807 или пустым',
     mapSize: 'Размер карты',
     pattern: 'Схема симметрии',
     symmetry: 'Симметрия',
@@ -42,6 +44,7 @@ export const stoneMap = {
     unitsPerRowHint: 'Для наземных юнитов и кораблей.',
     spawnCount: 'Игроки',
     numTeams: 'Команды',
+    noTeams: 'Без команд',
     teamSpread: 'Отдаление спавнов команды',
     teamSpreadHint:
       '0% — компактнее, 100% — дальше друг от друга. Учитываются все союзные спавны, включая симметричные копии. Границы ниже, суша и площадки баз важнее.',

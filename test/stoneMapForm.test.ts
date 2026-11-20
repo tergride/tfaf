@@ -9,9 +9,14 @@ import {
   RANDOM_FREE_ISLANDS,
   selectExplicitResources,
   selectPattern,
+  selectSpawnCount,
   selectSpawnIslandMode,
+  selectTeams,
+  seedIsValid,
   selectTopology,
   spawnIslandModeAllowed,
+  symmetryFitsTeams,
+  teamCountsFor,
   type StoneMapForm,
 } from '../src/shared/stoneMap/form.ts';
 import type { ResolvedParameters } from '../src/shared/stoneMap/contracts.ts';
@@ -94,6 +99,15 @@ describe('StoneMap form', () => {
     assert.equal(formToRequest({ form: { ...initial, displayName: ' ', mapDescription: '\n' }, random: [] }).presentation, undefined);
   });
 
+  it('takes an empty seed, a 64-bit integer or a seed left to chance', () => {
+    const state = (seed: string, random: string[] = []) => ({ form: { ...initial, seed }, random });
+    assert.equal(seedIsValid(state('')), true);
+    assert.equal(seedIsValid(state(' -9223372036854775808 ')), true);
+    assert.equal(seedIsValid(state('9223372036854775808')), false);
+    assert.equal(seedIsValid(state('abc')), false);
+    assert.equal(seedIsValid(state('abc', ['seed'])), true);
+  });
+
   it('rounds the players for symmetry patterns and keeps the form it started from', () => {
     const form: StoneMapForm = { ...initial, spawnCount: 5, numTeams: 4, terrainMode: 'STANDARD' };
     const curve = selectPattern(form, 'S_CURVE');
@@ -103,6 +117,36 @@ describe('StoneMap form', () => {
     assert.equal(selectPattern(form, 'LAYERED').terrainMode, 'REALISM');
     assert.equal(selectPattern(form, 'ASYMMETRIC').symmetry, 'NONE');
     assert.equal(form.spawnCount, 5);
+  });
+
+  it('offers only team counts that divide the players and keeps the island mode possible', () => {
+    assert.deepEqual(teamCountsFor(6), [0, 2, 3, 6]);
+    assert.deepEqual(teamCountsFor(2), [0, 2]);
+    assert.deepEqual(teamCountsFor(5), [0, 5]);
+    const six: StoneMapForm = { ...initial, spawnCount: 6, numTeams: 3 };
+    assert.equal(selectSpawnCount(six, 9).numTeams, 3);
+    assert.equal(selectSpawnCount(six, 8).numTeams, 2);
+    assert.equal(selectSpawnCount(six, 7).numTeams, 0);
+    // Team groups need four teams on fourfold coasts; the mode falls back instead of making a request StoneMap refuses.
+    const groups: StoneMapForm = { ...initial, kind: 'ISLAND', spawnIslandMode: 'TEAM_GROUPS', numTeams: 2, spawnCount: 8 };
+    assert.equal(selectPattern(groups, 'QUADRANTS').spawnIslandMode, 'AUTO');
+    assert.equal(selectPattern(groups, 'S_CURVE').spawnIslandMode, 'TEAM_GROUPS');
+    assert.equal(selectTeams(groups, 0).spawnIslandMode, 'AUTO');
+  });
+
+  it('keeps the terrain symmetry shareable between the teams, as StoneMap requires', () => {
+    const classic: StoneMapForm = { ...initial, pattern: 'CLASSIC', symmetry: 'POINT2', spawnCount: 6, numTeams: 2 };
+    assert.equal(selectTeams(classic, 3).symmetry, 'POINT3');
+    assert.equal(selectTeams(classic, 6).symmetry, 'POINT6');
+    assert.equal(selectTeams({ ...classic, spawnCount: 8 }, 4).symmetry, 'POINT4');
+    assert.equal(selectTeams(classic, 0).symmetry, 'POINT2');
+    assert.equal(selectTeams({ ...classic, spawnCount: 16 }, 16).symmetry, 'POINT16');
+    assert.equal(symmetryFitsTeams(classic, 'QUAD', 2), true);
+    assert.equal(symmetryFitsTeams(classic, 'NONE', 2), false);
+    assert.equal(symmetryFitsTeams({ ...classic, pattern: 'ASYMMETRIC' }, 'NONE', 2), true);
+    // A fixed pattern keeps its symmetry, so the player count keeps teams that fit it.
+    const curve = selectPattern({ ...classic, numTeams: 2 }, 'S_CURVE');
+    assert.equal(selectSpawnCount({ ...curve, numTeams: 2 }, 12).numTeams, 2);
   });
 
   it('moves split islands to a shared one on land and lakes, within the lake water limit', () => {

@@ -16,6 +16,7 @@ export const stoneMap: Messages['stoneMap'] = {
   copy: 'Copy the request as JSON',
   copied: 'The generation request is copied to the clipboard.',
   copyFailed: 'Could not copy the request to the clipboard.',
+  invalidSettings: 'StoneMap would refuse these settings: {error}',
   generate: 'Generate map',
   validated: 'The settings are fine; nothing was generated. Seed {seed}, recipe {mapName}',
   mapSize: '{km} × {km} km',
@@ -35,6 +36,7 @@ export const stoneMap: Messages['stoneMap'] = {
     seed: 'Seed',
     seedPlaceholder: 'Empty for a random one',
     reroll: 'Random seed',
+    invalidSeed: 'The seed must be a whole number from −9223372036854775808 to 9223372036854775807, or empty',
     mapSize: 'Map size',
     pattern: 'Symmetry pattern',
     symmetry: 'Symmetry',
@@ -44,6 +46,7 @@ export const stoneMap: Messages['stoneMap'] = {
     unitsPerRowHint: 'For land units and ships.',
     spawnCount: 'Players',
     numTeams: 'Teams',
+    noTeams: 'No teams',
     teamSpread: 'Team spawn spread',
     teamSpreadHint:
       '0% keeps allies close, 100% far apart. Every allied spawn counts, symmetric copies too. The bounds below, land and base space take priority.',

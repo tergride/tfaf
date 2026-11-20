@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, Minus, Plus, Redo2, RotateCcw, Trash2, Undo2, X } from '@lucide/vue';
-import { useElementSize } from '@vueuse/core';
+import { useElementSize, useEventListener } from '@vueuse/core';
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -322,8 +322,13 @@ function nudge(event: KeyboardEvent): boolean {
   return true;
 }
 
+// Keys act on the whole view whatever has the focus, as long as no field, list or dialog takes them: a dragged marker
+// leaves the focus where it was.
+const OWN_KEYS = 'input, textarea, [contenteditable="true"], [role=combobox], [role=listbox], [role=option], [role=menu], [role=dialog]';
+
 function onKey(event: KeyboardEvent): void {
-  if (event.defaultPrevented || (event.target as Element).closest('input, textarea, [contenteditable="true"]') || locked.value) {
+  const target = event.target instanceof Element ? event.target : null;
+  if (event.defaultPrevented || target?.closest(OWN_KEYS) || document.querySelector('[role=dialog], [role=alertdialog]') || locked.value) {
     return;
   }
   const key = event.key.toLowerCase();
@@ -338,6 +343,7 @@ function onKey(event: KeyboardEvent): void {
   }
   event.preventDefault();
 }
+useEventListener(window, 'keydown', onKey);
 
 let placementTimer: ReturnType<typeof setTimeout> | undefined;
 let placementRequest = 0;
@@ -422,7 +428,7 @@ function zoomBy(factor: number): void {
 </script>
 
 <template>
-  <section class="flex min-h-0 flex-1 flex-col outline-none" tabindex="-1" :aria-label="t('stoneMap.adjust.title')" @keydown="onKey">
+  <section class="flex min-h-0 flex-1 flex-col outline-none" tabindex="-1" :aria-label="t('stoneMap.adjust.title')">
     <!-- Fixed heights and no wrapping: the map below must not move when the texts here change. -->
     <div class="flex h-12 shrink-0 items-center gap-2 overflow-x-auto border-b px-4 [&>*]:shrink-0">
       <Button variant="outline" size="sm" :disabled="locked || !saved?.undo.length" data-tooltip="Ctrl+Z" @click="history('undo')">

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Copy, Play, RotateCw } from '@lucide/vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { STONEMAP_DOWNLOAD_MB, type GenerationRequest } from '../../../shared/contract.ts';
-import { formToRequest } from '../../../shared/stoneMap/form.ts';
+import { formToRequest, seedIsValid } from '../../../shared/stoneMap/form.ts';
 import StoneMapHistory from '../components/stoneMap/StoneMapHistory.vue';
 import StoneMapJobPanel from '../components/stoneMap/StoneMapJobPanel.vue';
 import StoneMapPreview from '../components/stoneMap/StoneMapPreview.vue';
@@ -19,6 +19,10 @@ const working = ref<'generate' | 'validate' | 'start' | null>(null);
 const panelBusy = ref(false);
 const message = ref<{ error: boolean; text: string } | null>(null);
 const busy = computed(() => working.value !== null || panelBusy.value);
+/** Why StoneMap would refuse the form as it is now; checked a moment after each change while StoneMap runs. */
+const invalid = ref<string | null>(null);
+let validationTimer: ReturnType<typeof setTimeout> | undefined;
+let validation = 0;
 
 /** Vue's proxies cannot cross IPC; the request goes as plain data. */
 function plain<T>(value: T): T {
@@ -87,6 +91,36 @@ async function copyRequest(): Promise<void> {
   }
 }
 
+watch(
+  [() => JSON.stringify(formToRequest(formState.value)), () => state.value.phase],
+  ([request, phase]) => {
+    clearTimeout(validationTimer);
+    // An invalid seed is explained under its field; StoneMap would only repeat it in .NET's words.
+    if (phase !== 'ready' || !seedIsValid(formState.value)) {
+      validation++;
+      invalid.value = null;
+      return;
+    }
+    validationTimer = setTimeout(() => {
+      const current = ++validation;
+      window.tfaf.stoneMap.resolve(JSON.parse(request) as GenerationRequest).then(
+        () => {
+          if (current === validation) {
+            invalid.value = null;
+          }
+        },
+        (cause: unknown) => {
+          if (current === validation) {
+            invalid.value = errorMessage(cause);
+          }
+        },
+      );
+    }, 500);
+  },
+  { immediate: true },
+);
+onBeforeUnmount(() => clearTimeout(validationTimer));
+
 onMounted(async () => {
   await stateLoaded();
   if (state.value.phase === 'ready') {
@@ -122,7 +156,11 @@ onMounted(async () => {
       <Button variant="outline" size="icon" :aria-label="t('stoneMap.copy')" :data-tooltip="t('stoneMap.copy')" @click="copyRequest">
         <Copy />
       </Button>
-      <Button size="lg" :disabled="busy || state.phase === 'installing' || state.phase === 'starting'" @click="generate()">
+      <Button
+        size="lg"
+        :disabled="busy || state.phase === 'installing' || state.phase === 'starting' || !seedIsValid(formState)"
+        @click="generate()"
+      >
         <Spinner v-if="working === 'generate'" /><Play v-else />
         {{ t('stoneMap.generate') }}
       </Button>
@@ -138,6 +176,9 @@ onMounted(async () => {
 
     <div class="flex min-h-0 flex-1">
       <aside class="w-[22rem] shrink-0 overflow-y-auto border-r">
+        <p v-if="invalid" class="sticky top-0 z-10 border-b bg-background px-4 py-2 text-xs text-warning selectable" role="status">
+          {{ t('stoneMap.invalidSettings', { error: invalid }) }}
+        </p>
         <StoneMapSettings :busy="busy" @validate="validate" @generate-by-name="(mapName) => generate({ mapName, preview: { kinds: [] } })" />
       </aside>
       <main class="flex min-w-0 flex-1 flex-col overflow-y-auto">

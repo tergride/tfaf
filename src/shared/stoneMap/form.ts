@@ -2,6 +2,7 @@
 // map units) and a set of settings left to the seed. formToRequest turns them into the API's request; the rules
 // between fields (topology, symmetry pattern, islands) follow the editor so the same choices make the same maps.
 
+import { isGeneratorSeed } from '../mapGenerator.ts';
 import { editorDefaults, parameterCatalog, parameterRanges } from './catalog.ts';
 import type {
   BiomeLayout,
@@ -83,26 +84,74 @@ export function waterMaximum(kind: TopologyKind): number {
   return Math.round((range?.maximum ?? 0.85) * 100);
 }
 
+/** An island mode the form no longer offers (spawnIslandModeAllowed) goes back to the automatic one. */
+function fitIslandMode(form: StoneMapForm): StoneMapForm {
+  return spawnIslandModeAllowed(form, form.spawnIslandMode) ? form : selectSpawnIslandMode(form, 'AUTO');
+}
+
 /** Symmetry patterns other than the classic one fix the symmetry and round the player count to fit. */
 export function selectPattern(form: StoneMapForm, pattern: SymmetryPattern): StoneMapForm {
   if (pattern === 'CLASSIC') {
-    return { ...form, pattern };
+    return fitIslandMode({ ...form, pattern });
   }
   if (pattern === 'ASYMMETRIC') {
-    return { ...form, pattern, symmetry: 'NONE' };
+    return fitIslandMode({ ...form, pattern, symmetry: 'NONE' });
   }
   const multiple = pattern === 'QUADRANTS' ? 4 : 2;
   const maximum = parameterRange('spawnCount')?.maximum ?? 16;
   const spawnCount = Math.min(maximum, Math.ceil(form.spawnCount / multiple) * multiple);
   const numTeams = form.numTeams && (multiple % form.numTeams || spawnCount % form.numTeams) ? 2 : form.numTeams;
-  return {
+  return fitIslandMode({
     ...form,
     pattern,
     symmetry: multiple === 4 ? 'POINT4' : 'POINT2',
     spawnCount,
     numTeams,
     terrainMode: pattern === 'LAYERED' ? 'REALISM' : form.terrainMode,
-  };
+  });
+}
+
+/** Team counts StoneMap takes for a player count: none, or one that divides the players evenly. */
+export function teamCountsFor(spawnCount: number): number[] {
+  return [0, ...Array.from({ length: Math.max(0, spawnCount - 1) }, (_, index) => index + 2).filter((teams) => spawnCount % teams === 0)];
+}
+
+/** How many copies a terrain symmetry makes (Symmetry.Points of StoneMap). */
+export function symmetryPoints(symmetry: string): number {
+  const point = /^POINT(\d+)$/.exec(symmetry);
+  if (point) {
+    return Number(point[1]);
+  }
+  return symmetry === 'QUAD' || symmetry === 'DIAG' ? 4 : symmetry === 'NONE' ? 1 : 2;
+}
+
+/** StoneMap shares the copies of a symmetry out between the teams, so their number must divide by the teams. */
+export function symmetryFitsTeams(form: StoneMapForm, symmetry: string, numTeams: number): boolean {
+  return numTeams === 0 || form.pattern === 'ASYMMETRIC' || symmetryPoints(symmetry) % numTeams === 0;
+}
+
+// The symmetry a classic map takes when the teams no longer fit the chosen one: the simplest that fits.
+const SYMMETRY_PREFERENCE = ['POINT2', 'POINT4', 'XZ', 'ZX', 'X', 'Z', 'QUAD', 'DIAG', ...Array.from({ length: 14 }, (_, index) => `POINT${index + 3}`)];
+
+function fitSymmetry(form: StoneMapForm): StoneMapForm {
+  if (form.pattern !== 'CLASSIC' || symmetryFitsTeams(form, form.symmetry, form.numTeams)) {
+    return form;
+  }
+  const symmetry = SYMMETRY_PREFERENCE.find((candidate) => symmetryFitsTeams(form, candidate, form.numTeams));
+  return symmetry ? { ...form, symmetry } : form;
+}
+
+/** A new player count keeps the teams if they still divide it, else takes the nearest count that does. */
+export function selectSpawnCount(form: StoneMapForm, spawnCount: number): StoneMapForm {
+  const allowed = teamCountsFor(spawnCount).filter((teams) => form.pattern === 'CLASSIC' || symmetryFitsTeams(form, form.symmetry, teams));
+  const numTeams = allowed.includes(form.numTeams)
+    ? form.numTeams
+    : allowed.reduce((best, teams) => (Math.abs(teams - form.numTeams) < Math.abs(best - form.numTeams) ? teams : best), 0);
+  return fitIslandMode(fitSymmetry({ ...form, spawnCount, numTeams }));
+}
+
+export function selectTeams(form: StoneMapForm, numTeams: number): StoneMapForm {
+  return fitIslandMode(fitSymmetry({ ...form, numTeams }));
 }
 
 /** Land and lakes keep all spawns on one landmass; lakes start at 30% water. */
@@ -135,6 +184,12 @@ export function spawnIslandModeAllowed(form: StoneMapForm, mode: SpawnIslandMode
     return false;
   }
   return !(teamIslands(mode) && (form.numTeams === 0 || ((form.pattern === 'QUADRANTS' || form.pattern === 'LAYERED') && form.numTeams % 4 !== 0)));
+}
+
+/** The seed is left to chance, empty (StoneMap picks one) or a signed 64-bit integer, as StoneMap takes it. */
+export function seedIsValid({ form, random }: StoneMapFormState): boolean {
+  const seed = form.seed.trim();
+  return random.includes('seed') || seed === '' || isGeneratorSeed(seed);
 }
 
 /** A random signed 64-bit seed. */

@@ -3,7 +3,7 @@ import { RefreshCw } from '@lucide/vue';
 import { computed, provide, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,17 +31,22 @@ import {
   parameterRange,
   RANDOM_FREE_ISLANDS,
   randomSeed,
+  seedIsValid,
   RELIEF_PROFILES,
   selectExplicitResources,
   selectPattern,
+  selectSpawnCount,
   selectSpawnIslandMode,
+  selectTeams,
   selectTopology,
   spawnIslandModeAllowed,
   splitIslands,
+  symmetryFitsTeams,
   SPAWN_ISLAND_MODES,
   type StoneMapForm,
   SYMMETRY_PATTERNS,
   TOPOLOGY_KINDS,
+  teamCountsFor,
   waterMaximum,
 } from '../../../../shared/stoneMap/form.ts';
 import { useStoneMap } from '../../composables/useStoneMap.ts';
@@ -184,6 +189,7 @@ function setCustomSun(enabled: boolean | 'indeterminate'): void {
           </Button>
           <RandomToggle path="seed" :label="t('stoneMap.settings.seed')" />
         </div>
+        <FieldError v-if="!seedIsValid(formState)">{{ t('stoneMap.settings.invalidSeed') }}</FieldError>
       </Field>
       <SmSelect
         id="sm-map-size"
@@ -205,7 +211,7 @@ function setCustomSun(enabled: boolean | 'indeterminate'): void {
         id="sm-symmetry"
         :label="t('stoneMap.settings.symmetry')"
         :model-value="form.symmetry"
-        :options="options(capabilities.terrainSymmetries)"
+        :options="capabilities.terrainSymmetries.map((value) => ({ value, label: value, disabled: !symmetryFitsTeams(form, value, form.numTeams) }))"
         :disabled="form.pattern !== 'CLASSIC'"
         random-path="terrainSymmetry"
         @update:model-value="(value) => set('symmetry', value)"
@@ -249,15 +255,20 @@ function setCustomSun(enabled: boolean | 'indeterminate'): void {
           :min="form.pattern === 'QUADRANTS' ? 4 : spawnRange.minimum"
           :max="spawnRange.maximum"
           :step="spawnStep"
-          @update:model-value="(value) => set('spawnCount', Math.min(spawnRange.maximum, Math.max(spawnRange.minimum, Math.round(value ?? 2))))"
+          @update:model-value="(value) => apply(selectSpawnCount(form, Math.min(spawnRange.maximum, Math.max(spawnRange.minimum, Math.round(value ?? 2)))))"
         />
-        <SmNumber
+        <SmSelect
           id="sm-teams"
           :label="t('stoneMap.settings.numTeams')"
           :model-value="form.numTeams"
-          :min="0"
-          :max="form.spawnCount"
-          @update:model-value="(value) => set('numTeams', Math.min(form.spawnCount, Math.max(0, Math.round(value ?? 0))))"
+          :options="
+            teamCountsFor(form.spawnCount).map((teams) => ({
+              value: teams,
+              label: teams === 0 ? t('stoneMap.settings.noTeams') : String(teams),
+              disabled: form.pattern !== 'CLASSIC' && !symmetryFitsTeams(form, form.symmetry, teams),
+            }))
+          "
+          @update:model-value="(value) => apply(selectTeams(form, value))"
         />
       </div>
       <SmSlider
