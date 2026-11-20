@@ -23,8 +23,8 @@ export interface StoneMapBuild {
 
 export const STONEMAP_BUILD: StoneMapBuild = {
   id: '073cd39',
-  url: 'https://github.com/tergride/tfaf/releases/download/v1.1.0/stonemap-073cd39-win-x64.zip',
-  sha256: '6a71d361d40ed7b4edd567bafc28a58b5430c66581929d18354948c719711b5a',
+  url: 'https://github.com/tergride/tfaf/releases/download/v1.1.0-beta.1/stonemap-073cd39-win-x64.zip',
+  sha256: 'b4c393516fbba52ac332186214e0a19ad8019cf5470fffc5f9b13b575d744f71',
   directory: 'stonemap-073cd39',
 };
 
