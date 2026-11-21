@@ -2,6 +2,26 @@
 
 <!-- Раздел на версию: заголовок с версией и датой, под ним части ru и en. -->
 
+## 1.1.0-beta.2 — 2026-11-21
+
+<!-- ru -->
+### Исправлено
+
+- Esc закрывает список уведомлений и меню аккаунта с первого раза. Раньше, если курсор стоял над элементом с подсказкой, подсказка всплывала поверх, и первый Esc закрывал только её.
+- «Генератор карт» помещается в окно 1280×820 и меньше: вкладки превью переносятся на вторую строку, и «Корректировка» больше не уходит за край. В узком окне «История» стоит под панелью задания.
+- Если игра упала или её закрыли принудительно, код ошибки в уведомлении показывается как 0xC0000005, а не длинным числом вроде 4294967295.
+- Тихая установка (`/S /D=…`) в папку без TFAF в имени теперь, как и установка в окне, ставит программу во вложенную папку TFAF. Раньше удаление стёрло бы всю выбранную папку.
+- Экранный диктор читает кнопку закрытия окон и индикатор загрузки на языке интерфейса, а не по-английски.
+
+<!-- en -->
+### Fixed
+
+- Esc closes the notifications list and the account menu on the first press. Before, if the pointer rested on an element with a hint, the hint popped up on top and the first Esc closed only the hint.
+- The Map generator fits a 1280×820 window and smaller ones: the preview tabs wrap to a second row, and the Adjust tab no longer goes past the edge. In a narrow window, History sits below the job panel.
+- When the game crashes or is closed by force, the notification shows its error code as 0xC0000005 rather than a long number such as 4294967295.
+- A silent install (`/S /D=…`) into a folder without TFAF in its name now puts the program into a TFAF subfolder, as the installer window does. Before, an uninstall would have deleted the whole chosen folder.
+- Screen readers read the close button of windows and the loading indicator in the interface language instead of English.
+
 ## 1.1.0-beta.1 — 2026-11-21
 
 <!-- ru -->
