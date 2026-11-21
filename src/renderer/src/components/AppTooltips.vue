@@ -32,9 +32,20 @@ function hintOf(element: HTMLElement | null): string | null {
   return element?.isConnected ? tooltipText(element) : null;
 }
 
+const OPEN_LAYERS = '[role=dialog][data-state=open], [role=menu][data-state=open], [role=listbox][data-state=open]';
+
+/**
+ * A hint is a layer of its own, and Escape goes to the highest layer: a hint of the page behind an open popover, menu
+ * or dialog would take the first Escape, and the popover would stay. Such hints wait until the layer closes.
+ */
+function behindOpenLayer(element: HTMLElement): boolean {
+  const layers = [...document.querySelectorAll(OPEN_LAYERS)];
+  return layers.length > 0 && !layers.some((layer) => layer.contains(element));
+}
+
 /** No event tells when an element goes away or changes its hint under a resting pointer. */
 function refresh(): void {
-  const hint = hintOf(anchor.value);
+  const hint = anchor.value && behindOpenLayer(anchor.value) ? null : hintOf(anchor.value);
   if (hint) {
     text.value = hint;
   } else {
@@ -43,7 +54,7 @@ function refresh(): void {
 }
 
 function show(element: HTMLElement): void {
-  const hint = hintOf(element);
+  const hint = behindOpenLayer(element) ? null : hintOf(element);
   if (!hint) {
     hide();
     return;
