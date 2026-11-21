@@ -175,7 +175,7 @@ onMounted(async () => {
     </div>
 
     <div class="flex min-h-0 flex-1">
-      <aside class="w-[22rem] shrink-0 overflow-y-auto border-r">
+      <aside class="w-[20rem] shrink-0 overflow-y-auto border-r xl:w-[22rem]">
         <p v-if="invalid" class="sticky top-0 z-10 border-b bg-background px-4 py-2 text-xs text-warning selectable" role="status">
           {{ t('stoneMap.invalidSettings', { error: invalid }) }}
         </p>
@@ -193,8 +193,12 @@ onMounted(async () => {
           @generate="generate"
           @busy="(value) => (panelBusy = value)"
         />
+        <!-- A window narrower than xl leaves the preview too little width beside a third column. -->
+        <div class="flex max-h-96 flex-col border-t xl:hidden">
+          <StoneMapHistory :busy="busy" />
+        </div>
       </main>
-      <aside class="flex w-64 shrink-0 flex-col border-l xl:w-72">
+      <aside class="hidden w-72 shrink-0 flex-col border-l xl:flex">
         <StoneMapHistory :busy="busy" />
       </aside>
     </div>

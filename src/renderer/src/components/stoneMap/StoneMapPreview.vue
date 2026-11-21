@@ -134,10 +134,11 @@ function zoomBy(factor: number): void {
 <template>
   <div class="flex min-h-0 flex-1 flex-col">
     <div class="flex flex-wrap items-center gap-3 border-b px-4 py-2">
-      <Tabs v-model="tab">
-        <TabsList>
-          <TabsTrigger v-for="value in KINDS" :key="value" :value="value" class="px-3">{{ previewKindLabel(value) }}</TabsTrigger>
-          <TabsTrigger value="adjust" class="px-3" :disabled="!completed || !result">{{ t('stoneMap.preview.adjust') }}</TabsTrigger>
+      <!-- In a narrow column the tabs wrap instead of pushing the column wider than the window. -->
+      <Tabs v-model="tab" class="max-w-full min-w-0">
+        <TabsList class="h-auto max-w-full flex-wrap justify-start">
+          <TabsTrigger v-for="value in KINDS" :key="value" :value="value" class="h-[30px] flex-none px-3">{{ previewKindLabel(value) }}</TabsTrigger>
+          <TabsTrigger value="adjust" class="h-[30px] flex-none px-3" :disabled="!completed || !result">{{ t('stoneMap.preview.adjust') }}</TabsTrigger>
         </TabsList>
       </Tabs>
       <div class="ml-auto flex items-center gap-2">
