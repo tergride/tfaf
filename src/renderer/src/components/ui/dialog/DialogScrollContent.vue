@@ -4,6 +4,7 @@ import type { HTMLAttributes } from "vue"
 import { X } from "@lucide/vue"
 import { reactiveOmit } from "@vueuse/core"
 import { cn } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 import {
   DialogClose,
   DialogContent,
@@ -51,7 +52,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
           class="plate plate-focus cut-xs absolute top-4 right-4 grid size-7 place-items-center text-muted-foreground transition-colors [--plate-border:transparent] hover:bg-accent hover:text-foreground"
         >
           <X class="w-4 h-4" />
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ t('common.close') }}</span>
         </DialogClose>
       </DialogContent>
     </DialogOverlay>
