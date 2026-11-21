@@ -302,6 +302,10 @@ describe('game exit', () => {
   it('reports an exit with an error code, an unknown code and missing system libraries, not a normal exit', () => {
     assert.equal(exitError(0, 'game.log'), null);
     assert.match(exitError(1, 'game.log') ?? '', /код 1\).*game\.log/);
+    // A killed game (TerminateProcess with -1) and an access violation, as Node and Java report them.
+    assert.match(exitError(4294967295, 'game.log') ?? '', /код 0xFFFFFFFF\)/);
+    assert.match(exitError(3221225477, 'game.log') ?? '', /код 0xC0000005\)/);
+    assert.match(exitError(-1073741819, 'game.log') ?? '', /код 0xC0000005\)/);
     assert.match(exitError(null, 'game.log') ?? '', /код неизвестен.*game\.log/);
     // STATUS_DLL_NOT_FOUND as Node and Java report it.
     assert.match(exitError(3221225781, 'game.log') ?? '', /библиотек/);
