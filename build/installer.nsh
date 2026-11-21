@@ -82,8 +82,17 @@ LangString tfafExtractError 1049 "Не удалось распаковать ф�
     StrCpy $INSTDIR $tfafPortableDirectory
   ${endif}
   ; The stock running-process hook is skipped in an elevated inner installer.
-  ; Silent runs also skip page callbacks, so validate their final path here.
+  ; Silent runs also skip page callbacks, so normalize and validate their final path here.
   ${if} ${Silent}
+    ; The window appends \TFAF to a folder without it before installing (instFilesPre). A silent /D= gets the same,
+    ; or an uninstall would delete the whole folder given, such as C:\Games. Updates keep the installed folder.
+    ${if} $tfafPortable != "1"
+    ${andIfNot} ${isUpdated}
+      !insertmacro GetDParameter $1
+      ${if} $1 != ""
+        Call instFilesPre
+      ${endif}
+    ${endif}
     Call TfafValidateTarget
     ${if} $tfafValidationError != ""
       MessageBox MB_OK|MB_ICONSTOP "$tfafValidationError" /SD IDOK
